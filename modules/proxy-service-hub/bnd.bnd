@@ -1,0 +1,5 @@
+Bundle-Name: proxy-service-hub
+Bundle-SymbolicName: proxyservicehub
+Bundle-Version: 1.0.0
+
+Liferay-Configuration-Path: /configuration

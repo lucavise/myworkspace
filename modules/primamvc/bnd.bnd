@@ -1,0 +1,4 @@
+Bundle-Name: primamvc
+Bundle-SymbolicName: PrimaMvc
+Bundle-Version: 1.0.0
+Export-Package: PrimaMvc.constants
