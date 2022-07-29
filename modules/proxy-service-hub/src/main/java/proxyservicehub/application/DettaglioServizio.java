@@ -14,6 +14,7 @@ public class DettaglioServizio {
      * Endpoint del servizio da richiamare
      */
     private String uri;
+    private String methodLFRY;
 
     public String getVerbo() {
         return verbo;
@@ -34,6 +35,8 @@ public class DettaglioServizio {
     public String getUri() {
         return uri;
     }
+
+    public String getMethodLFRY() { return methodLFRY; }
 
     public void setUri(String uri) {
         this.uri = uri;
