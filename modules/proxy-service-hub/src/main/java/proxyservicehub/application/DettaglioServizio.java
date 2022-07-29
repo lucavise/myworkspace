@@ -41,7 +41,8 @@ public class DettaglioServizio {
     }
 
     /**
-     * motodo che referenzia servizi liferay interni da noi sviluppati
+     * questo è il campo che gestisce il motodo
+     * che referenzia servizi liferay interni da noi sviluppati
      */
     public String getMethodLFRY() { return methodLFRY; }
 
