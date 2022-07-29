@@ -40,6 +40,9 @@ public class DettaglioServizio {
         return uri;
     }
 
+    /**
+     * motodo che referenzia servizi liferay interni da noi sviluppati
+     */
     public String getMethodLFRY() { return methodLFRY; }
 
     public void setUri(String uri) {
