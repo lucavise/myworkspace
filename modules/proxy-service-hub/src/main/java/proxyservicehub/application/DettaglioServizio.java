@@ -14,6 +14,10 @@ public class DettaglioServizio {
      * Endpoint del servizio da richiamare
      */
     private String uri;
+
+    /**
+     * motodo che referenzia servizi liferay interni da noi sviluppati
+     */
     private String methodLFRY;
 
     public String getVerbo() {
