@@ -28,6 +28,10 @@ public class DettaglioServizio {
         return verbo;
     }
 
+    /**
+     * setter del verbo feature
+     * @param verbo
+     */
     public void setVerbo(String verbo) {
         this.verbo = verbo;
     }
