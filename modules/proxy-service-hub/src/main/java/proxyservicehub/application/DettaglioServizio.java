@@ -44,6 +44,10 @@ public class DettaglioServizio {
         return body;
     }
 
+    /**
+     * setter del body branch develop
+     * @param body
+     */
     public void setBody(String body) {
         this.body = body;
     }
