@@ -20,6 +20,10 @@ public class DettaglioServizio {
      */
     private String methodLFRY;
 
+    /**
+     * getter del verbo
+     * @return
+     */
     public String getVerbo() {
         return verbo;
     }
