@@ -79,7 +79,7 @@ public class ProxyServiceHubApplication extends Application {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String call(DettaglioServizio dto) {
 		// commento 81
-		// _logger.debug("Body:");
+		// commento 82
 		String body = dto.getBody();
 		// _logger.debug(body);
 		// _logger.debug("Verbo:");
