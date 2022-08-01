@@ -84,7 +84,7 @@ public class ProxyServiceHubApplication extends Application {
 		// _commento 84
 		// _logger.debug("Verbo:");
 		String verbo = dto.getVerbo().toUpperCase();
-		// _logger.debug(verbo);
+		// commento 87
 		// _logger.debug("Servizio:");
 		String uri = dto.getUri();
 		// _logger.debug(uri);
