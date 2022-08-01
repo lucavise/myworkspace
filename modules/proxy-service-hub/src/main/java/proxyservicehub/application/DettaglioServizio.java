@@ -28,6 +28,10 @@ public class DettaglioServizio {
         this.verbo = verbo;
     }
 
+    /**
+     * getter del body
+     * @return
+     */
     public String getBody() {
         return body;
     }
