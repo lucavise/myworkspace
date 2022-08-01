@@ -40,14 +40,17 @@ public class DettaglioServizio {
         this.body = body;
     }
 
+    /**
+     * getter dell'uri che vado a chiamare dal proxy
+     * @return
+     */
     public String getUri() {
         return uri;
     }
 
     /**
-     * questo è il campo che gestisce il motodo
+     * campo che gestisce il motodo
      * che referenzia servizi liferay interni da noi sviluppati
-     * ok???
      */
     public String getMethodLFRY() { return methodLFRY; }
 
