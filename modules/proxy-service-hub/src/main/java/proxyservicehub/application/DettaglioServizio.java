@@ -36,6 +36,10 @@ public class DettaglioServizio {
         this.body = body;
     }
 
+    /**
+     * getter dell'uri che vado a chiamare dal proxy
+     * @return
+     */
     public String getUri() {
         return uri;
     }
