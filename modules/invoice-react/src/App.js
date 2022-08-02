@@ -15,9 +15,13 @@ import {
   Selection,
   Editing,
   Lookup,
+  Button,
+  CheckBox,
   HeaderFilter,
   FilterBuilderPopup,
-  ColumnHeaderFilter
+  DropDownBox,
+  ColumnHeaderFilter,
+  FilterOperationDescriptions
 } from 'devextreme-react/data-grid';
 import { invoices } from './data/invoices';
 import { exportDataGrid } from 'devextreme/pdf_exporter';
@@ -43,8 +47,26 @@ function App() {
     });
   });
 
+  const statifattura = [
+    {
+      "ID": 1,
+      "name": "Stores",
+      "expanded": true
+    },
+    {
+      "ID": "1_1",
+      "categoryId": 1,
+      "name": "Super Mart of the West",
+      "expanded": true
+    },
+    {
+      "ID": "1_1_1",
+      "categoryId": "1_1",
+      "name": "Video Players"
+    }];
+
   return (
-    <div className="App">
+    <div className="App invoice-react">
       <DataGrid
         id="dataGrid"
         dataSource={invoices}
@@ -55,13 +77,14 @@ function App() {
         columnAutoWidth={true}
         showBorders={true}
         onExporting={onExporting}
+        showColumnLines={false}
+        showRowLines={true}
+        rowAlternationEnabled={true}
       >
-        <Selection mode="multiple" deferred={true} />
+        <Selection mode="multiple" selectAllMode={true} deferred={true} />
         <Paging defaultPageSize={10} />
         <Pager showPageSizeSelector={true} showInfo={true} />
-        <SearchPanel visible={true}
-            width={240}
-            placeholder="Search..." />
+
         <Export enabled={true} formats={exportFormats} allowExportSelectedData={true} />
         <FilterRow visible={true} />
         <FilterPanel visible={true} />
@@ -71,15 +94,21 @@ function App() {
           allowSearch={true}
           visible={true}
         />
+        <Column type="buttons" width={150}>
+          <Button name="open" hint="Dettaglio" icon="fas fa-search-plus" />
+          <Button name="view-signature-doc" hint="Visualizza documento principale in una nuova scheda [Firmato]" icon="fas fa-file-signature" />
+          <Button name="" hint="Ricevute e comunicazioni SDI" icon="fas fa-stream" />
+        </Column>
 
-        <Column dataField={'Progressivo'} />
+        <Column dataField={'Progressivo'} allowFiltering={false} />
 
         <Column
-          dataField={'Etichette'}
+          dataField={'Etichette'} allowFiltering={false}
         />
         <Column
           dataField={'Data inserimento'}
           dataType={'date'}
+          filterOperations={['=', '<=', '>=', 'between']}
         />
         <Column
           dataField={'In carico a'}
@@ -95,9 +124,11 @@ function App() {
         <Column
           dataField={'Data fattura'}
           dataType={'date'}
+          allowFiltering={false}
         />
         <Column
           dataField={'Partita IVA fornitore'}
+          allowFiltering={false}
         />
         <Column
           dataField={'CF fornitore'}
@@ -132,6 +163,7 @@ function App() {
         />
         <Column
           dataField={'Formato trasmissione'}
+          allowFiltering={false}
         />
         <Column
           dataField={'Canale principale'}
@@ -141,6 +173,7 @@ function App() {
         />
         <Column
           dataField={'Stato fattura'}
+          allowFiltering={false}
         />
         <Column
           dataField={'Stato conservazione'}
