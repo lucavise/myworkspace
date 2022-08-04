@@ -18,18 +18,65 @@ import {
   Toolbar,
   Item
 } from 'devextreme-react/data-grid';
+import TreeView from 'devextreme-react/tree-view';
+import DateBox from 'devextreme-react/date-box';
 import DropDownBox from 'devextreme-react/drop-down-box';
 import SelectBox from 'devextreme-react/select-box';
 import { invoices } from './data/invoices';
 import { exportDataGrid } from 'devextreme/pdf_exporter';
+import {
+  Popup
+} from 'devextreme-react/popup';
 import { jsPDF } from 'jspdf';
 
 const exportFormats = ['pdf'];
+const optionsInvoiceState = [{
+  "ID": 1,
+  "name": "DA LAVORARE"
+},
+{
+  "ID": 2,
+  "name": "DA FIRMARE"
+},
+{
+  "ID": 3,
+  "name": "CONSEGNATO"
+}];
+
+const optionsInvoiceType = [{
+  "ID": 1,
+  "name": "B2B"
+},
+{
+  "ID": 2,
+  "name": "PA"
+}];
+
+const optionsInvoicePeriod = [{
+  "ID": 1,
+  "name": "Libero"
+},
+{
+  "ID": 2,
+  "name": "Mese precedente"
+}];
+
+const optionsPeriodTypePopup = [{
+  "ID": 1,
+  "name": "Compreso tra"
+},
+{
+  "ID": 2,
+  "name": "Uguale a"
+}];
 
 function App() {
   const [invoiceState, setInvoiceState] = React.useState();
   const [invoiceType, setInvoiceType] = React.useState();
   const [invoicePeriod, setInvoicePeriod] = React.useState();
+  const [typePeriodPopup, setTypePeriodPopup] = React.useState();
+  const [multiValuesInvoiceState, setMultiValuesInvoiceState] = React.useState([1]);
+  const [treeView, setTreeView] = React.useState();
 
   const onExporting = React.useCallback((e) => {
     const doc = new jsPDF();
@@ -43,52 +90,160 @@ function App() {
     });
   });
 
-  const optionsInvoiceState = [{
-    "ID": 1,
-    "name": "DA LAVORARE"
-  },
-  {
-    "ID": 2,
-    "name": "DA FIRMARE"
-  }];
+  const handleClearValueInvoiceState = (e) => {
 
-  const optionsInvoiceType = [{
-    "ID": 1,
-    "name": "B2B"
-  },
-  {
-    "ID": 2,
-    "name": "PA"
-  }];
+    const treeView = (e.component.selectItem && e.component)
+      || (treeView && treeView.instance);
 
-  const optionsInvoicePeriod = [{
-    "ID": 1,
-    "name": "Libero"
-  },
-  {
-    "ID": 2,
-    "name": "Mese precedente"
-  }];
+    if (treeView) {
+      console.log("sono dentro");
+      if (e.value === null) {
+        treeView.unselectAll();
+      } else {
+        const values = e.value || multiValuesInvoiceState;
+        values && values.forEach((value) => {
+          treeView.selectItem(value);
+        });
+      }
+    } else {
+      console.log("uffi");
+    }
 
-  const handleChangeInvoiceState = (e) => {
-    console.log("--> ciao " + JSON.stringify(e.value));
-    setInvoiceState(JSON.stringify(e.value));
+    if (e.value !== undefined) {
+      setMultiValuesInvoiceState([]);
+    }
+
+    console.log(multiValuesInvoiceState);
+
+    /*
+    if (e.value === null) {
+      console.log("clear");
+      setMultiValuesInvoiceState([]);
+    } else {
+      console.log("sto selezionando");
+      console.log(e);
+      const values = e.value || multiValuesInvoiceState;
+      values && values.forEach((value) => {
+        // treeView.selectItem(value);
+      });
+    }
+    */
+  }
+
+  const handleChangeSelectionInvoiceState = (e) => {
+    console.log("select");
+    setMultiValuesInvoiceState(e.node.itemData.ID);
+    console.log(e);
   }
 
   const handleChangeInvoiceType = (e) => {
-    console.log("--> ciao 2 " + e);
-    setInvoiceType(JSON.stringify(e.value));
+    setInvoiceType(e.value);
   }
 
   const handleChangeInvoicePeriod = (e) => {
-    // console.log("--> ciao 3 " + e);
-    setInvoicePeriod(JSON.stringify(e.value));
+    setInvoicePeriod(e.value);
+  }
+
+  const handleChangeTypePeriodPopup = (e) => {
+    setTypePeriodPopup(e.value);
+  }
+
+  const buttonDownloadJobOptions = {
+    hint: 'Abilita salvataggi automatici',
+    icon: "fas fa-hdd"
+  };
+
+  const buttonDownloadOptions = {
+    icon: "fas fa-download"
+  };
+
+  const buttonSyncOptions = {
+    icon: "fas fa-sync-alt"
+  };
+
+  const buttonMoreOptions = {
+    icon: "fas fa-ellipsis-v"
+  };
+
+  const [isPopupVisible, setPopupVisibility] = React.useState(false);
+
+  const togglePopup = () => {
+    setPopupVisibility(!isPopupVisible);
+  };
+
+  const buttonForPopup = {
+    text: "Open popup",
+    onClick: function () {
+      console.log("ciao");
+      setPopupVisibility(!isPopupVisible);
+      console.log(isPopupVisible)
+    }
+  }
+
+  const renderContent = () => {
+    return (
+      <>
+        <SelectBox
+          width="225"
+          dataSource={optionsPeriodTypePopup}
+          displayExpr="name"
+          keyExpr="ID"
+          onValueChanged={handleChangeTypePeriodPopup}
+        />
+        <div className='space-date'>
+          {
+            typePeriodPopup !== undefined &&
+            typePeriodPopup.ID === 1 &&
+            doubleDateBox()
+          }
+          {
+            typePeriodPopup !== undefined &&
+            typePeriodPopup.ID === 2 &&
+            uniqueDateBox()
+          }
+        </div>
+      </>
+    )
+  }
+
+  const now = new Date();
+  const doubleDateBox = () => {
+    return (
+      <>
+        <DateBox defaultValue={now}
+          type="date" />
+        <DateBox defaultValue={now}
+          type="date" />
+      </>
+    );
+  }
+
+  const uniqueDateBox = () => {
+    return (
+      <>
+        <DateBox defaultValue={now}
+          type="date" />
+      </>
+    )
+  }
+
+  const treeViewRender = () => {
+    return (
+      <TreeView dataSource={optionsInvoiceState}
+        ref={(ref) => { setTreeView(ref) }}
+        dataStructure="plain"
+        keyExpr="ID"
+        selectionMode="multiple"
+        showCheckBoxesMode="normal"
+        displayExpr="name"
+        selectByClick={true}
+        onItemSelectionChanged={handleChangeSelectionInvoiceState}
+      />
+    );
   }
 
   return (
     <div className="App invoice-react">
-      <div className='stato'>{invoiceState !== undefined && invoiceState}</div>
-      <div className='tipo'>{invoiceType !== undefined && invoiceType}</div>
       <div className='panel-container'>
         <DataGrid
           id="dataGrid"
@@ -114,12 +269,16 @@ function App() {
           <FilterBuilderPopup position={filterBuilderPopupPosition} />
           <Toolbar>
             <Item location="before">
-              <SelectBox
+              <DropDownBox
                 width="225"
-                dataSource={optionsInvoiceState}
+                value={multiValuesInvoiceState}
+                valueExpr="ID"
                 displayExpr="name"
-                keyExpr="ID"
-                onValueChanged={handleChangeInvoiceState}
+                placeholder="Stato fattura"
+                showClearButton={true}
+                dataSource={optionsInvoiceState}
+                onValueChanged={handleClearValueInvoiceState}
+                contentRender={treeViewRender}
               />
             </Item>
             <Item location="before">
@@ -128,7 +287,8 @@ function App() {
                 dataSource={optionsInvoiceType}
                 displayExpr="name"
                 keyExpr="ID"
-                onChange={handleChangeInvoiceType}
+                placeholder='Fattura'
+                onValueChanged={handleChangeInvoiceType}
               />
             </Item>
             <Item location="before">
@@ -137,9 +297,35 @@ function App() {
                 dataSource={optionsInvoicePeriod}
                 displayExpr="name"
                 keyExpr="ID"
-                onChange={handleChangeInvoicePeriod}
+                defaultValue={"Libero"}
+                onValueChanged={handleChangeInvoicePeriod}
               />
             </Item>
+            <Item
+              widget="dxButton"
+              location="after"
+              options={buttonDownloadJobOptions}
+            />
+            <Item
+              widget="dxButton"
+              location="center"
+              options={buttonForPopup}>
+            </Item>
+            <Item
+              widget="dxButton"
+              location="after"
+              options={buttonDownloadOptions}
+            />
+            <Item
+              widget="dxButton"
+              location="after"
+              options={buttonSyncOptions}
+            />
+            <Item
+              widget="dxButton"
+              location="after"
+              options={buttonMoreOptions}
+            />
           </Toolbar>
           <HeaderFilter
             allowSearch={true}
@@ -236,6 +422,12 @@ function App() {
             dataField={'Identificativo SDI'}
           />
         </DataGrid>
+        <Popup
+          visible={isPopupVisible}
+          hideOnOutsideClick={true}
+          onHiding={togglePopup}
+          contentRender={renderContent}
+        />
       </div>
     </div>
   );
