@@ -16,3 +16,17 @@
 .dx-datagrid.dx-datagrid-borders > .dx-datagrid-header-panel {
   margin-bottom: 20px;
 }
+
+.dx-toolbar-item .dx-button {
+  border: none;
+}
+
+.dx-toolbar-item .dx-button .dx-button-content {
+  padding: 6px;
+}
+
+.dx-toolbar-item .dx-button .dx-button-content .dx-icon {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
