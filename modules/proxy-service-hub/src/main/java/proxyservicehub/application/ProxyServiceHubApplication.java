@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -81,6 +82,8 @@ public class ProxyServiceHubApplication extends Application {
 	public String fetchUserByUserID(
 			@PathParam("userid") String userid) {
 
+		// test da cancellare
+		UserLocalServiceUtil.fetchUserById(1);
 		String aa = "";
 
 		return aa;
