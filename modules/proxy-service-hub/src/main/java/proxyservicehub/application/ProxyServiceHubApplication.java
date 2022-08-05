@@ -2,6 +2,7 @@ package proxyservicehub.application;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -78,15 +79,18 @@ public class ProxyServiceHubApplication extends Application {
 
 	@GET
 	@Path("/fetchUserByUserID/{userid}")
-	@Produces("text/plain")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String fetchUserByUserID(
-			@PathParam("userid") String userid) {
+			@PathParam("userid") long userid) throws IOException {
 
 		// test da cancellare
-		UserLocalServiceUtil.fetchUserById(1);
-		String aa = "";
+		User userInLiferay = UserLocalServiceUtil.fetchUserById(userid);
+		ObjectMapper mapper = new ObjectMapper();
+		//Converting the Object to JSONString
+		String userInLiferayString = mapper.writeValueAsString(userInLiferay);
 
-		return aa;
+		return userInLiferayString;
 	}
 
 	@POST

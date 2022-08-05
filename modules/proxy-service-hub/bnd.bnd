@@ -1,5 +1,9 @@
 Bundle-Name: proxy-service-hub
 Bundle-SymbolicName: proxyservicehub
 Bundle-Version: 1.0.0
+Import-Package: \
+    !org.apache.avalon.*,\
+    !org.apache.log.*,\
+	*
 
 Liferay-Configuration-Path: /configuration
