@@ -23,11 +23,12 @@ import DateBox from 'devextreme-react/date-box';
 import DropDownBox from 'devextreme-react/drop-down-box';
 import SelectBox from 'devextreme-react/select-box';
 import { invoices } from './data/invoices';
-import { exportDataGrid } from 'devextreme/pdf_exporter';
+import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
 import {
   Popup
 } from 'devextreme-react/popup';
 import { jsPDF } from 'jspdf';
+import { useUserLiferay } from './utils/useUserLiferay';
 
 const exportFormats = ['pdf'];
 const optionsInvoiceState = [{
@@ -76,8 +77,11 @@ function App() {
   const [invoicePeriod, setInvoicePeriod] = React.useState();
   const [typePeriodPopup, setTypePeriodPopup] = React.useState();
   const [multiValuesInvoiceState, setMultiValuesInvoiceState] = React.useState([1]);
-  const [treeView, setTreeView] = React.useState();
+  const [treeViewMine, setTreeViewMine] = React.useState();
+  const userLogged = useUserLiferay();
+  console.log(userLogged);
 
+  /*
   const onExporting = React.useCallback((e) => {
     const doc = new jsPDF();
 
@@ -89,14 +93,25 @@ function App() {
       doc.save('Companies.pdf');
     });
   });
+  */
 
-  const handleClearValueInvoiceState = (e) => {
+  const dataGridRef = React.useRef(null);
+  function exportGrid() {
+    const doc = new jsPDF();
+    const dataGrid = dataGridRef.current.instance;
+    exportDataGridToPdf({
+      jsPDFDocument: doc,
+      component: dataGrid
+    }).then(() => {
+      doc.save('Customers.pdf');
+    });
+  }
 
+  const handleValueChangedInvoiceState = (e) => {
     const treeView = (e.component.selectItem && e.component)
-      || (treeView && treeView.instance);
+      || (treeViewMine && treeViewMine.instance);
 
     if (treeView) {
-      console.log("sono dentro");
       if (e.value === null) {
         treeView.unselectAll();
       } else {
@@ -105,34 +120,16 @@ function App() {
           treeView.selectItem(value);
         });
       }
-    } else {
-      console.log("uffi");
     }
 
     if (e.value !== undefined) {
-      setMultiValuesInvoiceState([]);
+      setMultiValuesInvoiceState(e.value);
     }
-
-    console.log(multiValuesInvoiceState);
-
-    /*
-    if (e.value === null) {
-      console.log("clear");
-      setMultiValuesInvoiceState([]);
-    } else {
-      console.log("sto selezionando");
-      console.log(e);
-      const values = e.value || multiValuesInvoiceState;
-      values && values.forEach((value) => {
-        // treeView.selectItem(value);
-      });
-    }
-    */
   }
 
-  const handleChangeSelectionInvoiceState = (e) => {
+  const handleItemSelectionChangedInvoiceState = (e) => {
     console.log("select");
-    setMultiValuesInvoiceState(e.node.itemData.ID);
+    setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
     console.log(e);
   }
 
@@ -154,7 +151,8 @@ function App() {
   };
 
   const buttonDownloadOptions = {
-    icon: "fas fa-download"
+    icon: "fas fa-download",
+    onClick: exportGrid
   };
 
   const buttonSyncOptions = {
@@ -172,7 +170,7 @@ function App() {
   };
 
   const buttonForPopup = {
-    text: "Open popup",
+    text: "Compreso tra.. ",
     onClick: function () {
       console.log("ciao");
       setPopupVisibility(!isPopupVisible);
@@ -229,15 +227,17 @@ function App() {
 
   const treeViewRender = () => {
     return (
-      <TreeView dataSource={optionsInvoiceState}
-        ref={(ref) => { setTreeView(ref) }}
+      <TreeView
+        dataSource={optionsInvoiceState}
+        ref={node => { setTreeViewMine(node) }}
         dataStructure="plain"
         keyExpr="ID"
         selectionMode="multiple"
         showCheckBoxesMode="normal"
         displayExpr="name"
         selectByClick={true}
-        onItemSelectionChanged={handleChangeSelectionInvoiceState}
+        onContentReady={handleValueChangedInvoiceState}
+        onItemSelectionChanged={handleItemSelectionChangedInvoiceState}
       />
     );
   }
@@ -246,6 +246,7 @@ function App() {
     <div className="App invoice-react">
       <div className='panel-container'>
         <DataGrid
+          ref={dataGridRef}
           id="dataGrid"
           dataSource={invoices}
           keyExpr="Progressivo"
@@ -254,7 +255,6 @@ function App() {
           allowColumnResizing={true}
           columnAutoWidth={true}
           showBorders={true}
-          onExporting={onExporting}
           showColumnLines={false}
           showRowLines={true}
           rowAlternationEnabled={true}
@@ -277,7 +277,7 @@ function App() {
                 placeholder="Stato fattura"
                 showClearButton={true}
                 dataSource={optionsInvoiceState}
-                onValueChanged={handleClearValueInvoiceState}
+                onValueChanged={handleValueChangedInvoiceState}
                 contentRender={treeViewRender}
               />
             </Item>

@@ -1,3 +1,20 @@
+.invoice-react .dx-card, .invoice-react .dx-datagrid-headers, .invoice-react .dx-datagrid-rowsview,
+.invoice-react .dx-datagrid-filter-panel {
+  border: none;
+}
+
+.invoice-react .dx-dropdowneditor-field-clickable {
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid;
+  border-radius: 0;
+}
+
+.invoice-react .dx-show-clear-button .dx-icon-clear::before {
+  margin-top: -8.5px;
+  margin-left: -8.5px;
+}
+
 .panel-container {
   width: 100%;
   padding: 10px;

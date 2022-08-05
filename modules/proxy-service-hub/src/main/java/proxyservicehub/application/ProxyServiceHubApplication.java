@@ -73,6 +73,17 @@ public class ProxyServiceHubApplication extends Application {
 		return greeting;
 	}
 
+	@GET
+	@Path("/fetchUserByUserID/{userid}")
+	@Produces("text/plain")
+	public String fetchUserByUserID(
+			@PathParam("userid") String userid) {
+
+		String aa = "";
+
+		return aa;
+	}
+
 	@POST
 	@Path("/call")
 	@Consumes(MediaType.APPLICATION_JSON)
