@@ -28,7 +28,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 
 
 /**
- * @author lvisentin@siav.net
+ * @author lvisentin@siav.neturi=/workflow.js.map}
  */
 @Component(
 	property = {

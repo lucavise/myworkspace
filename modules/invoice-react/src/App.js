@@ -18,15 +18,13 @@ import {
   Toolbar,
   Item
 } from 'devextreme-react/data-grid';
+import { Popup, ToolbarItem } from 'devextreme-react/popup';
 import TreeView from 'devextreme-react/tree-view';
 import DateBox from 'devextreme-react/date-box';
 import DropDownBox from 'devextreme-react/drop-down-box';
 import SelectBox from 'devextreme-react/select-box';
 import { invoices } from './data/invoices';
 import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
-import {
-  Popup
-} from 'devextreme-react/popup';
 import { jsPDF } from 'jspdf';
 import { useUserLiferay } from './utils/useUserLiferay';
 
@@ -79,7 +77,8 @@ function App() {
   const [multiValuesInvoiceState, setMultiValuesInvoiceState] = React.useState([1]);
   const [treeViewMine, setTreeViewMine] = React.useState();
   const userLogged = useUserLiferay();
-  console.log(userLogged);
+  const [popupRowDataVisible, setPopupRowDataVisible] = React.useState(false);
+  const [popupRowData, setPopupRowData] = React.useState();
 
   /*
   const onExporting = React.useCallback((e) => {
@@ -142,6 +141,7 @@ function App() {
   }
 
   const handleChangeTypePeriodPopup = (e) => {
+    console.log(e.value);
     setTypePeriodPopup(e.value);
   }
 
@@ -172,7 +172,6 @@ function App() {
   const buttonForPopup = {
     text: "Compreso tra.. ",
     onClick: function () {
-      console.log("ciao");
       setPopupVisibility(!isPopupVisible);
       console.log(isPopupVisible)
     }
@@ -181,6 +180,7 @@ function App() {
   const renderContent = () => {
     return (
       <>
+        <div className='subititle-popup-interval'>Intervallo</div>
         <SelectBox
           width="225"
           dataSource={optionsPeriodTypePopup}
@@ -242,6 +242,20 @@ function App() {
     );
   }
 
+  const handleContentReadyOfDataGrid = (e) => {
+    console.log(e.component.getDataSource())
+  }
+
+  const handleRowClick = (e) => {
+    setPopupRowDataVisible(true);
+    setPopupRowData(e.data);
+    // console.log(e);
+  }
+
+  const handleHidingPopup = () => {
+    setPopupRowDataVisible(false);
+  }
+
   return (
     <div className="App invoice-react">
       <div className='panel-container'>
@@ -249,7 +263,7 @@ function App() {
           ref={dataGridRef}
           id="dataGrid"
           dataSource={invoices}
-          keyExpr="Progressivo"
+          keyExpr="progressivo"
           className={'dx-card wide-card'}
           allowColumnReordering={true}
           allowColumnResizing={true}
@@ -258,6 +272,8 @@ function App() {
           showColumnLines={false}
           showRowLines={true}
           rowAlternationEnabled={true}
+          onRowDblClick={handleRowClick}
+          onContentReady={handleContentReadyOfDataGrid}
         >
           <Selection mode="multiple" selectAllMode={true} deferred={true} />
           <Paging defaultPageSize={10} />
@@ -337,97 +353,152 @@ function App() {
             <Button name="" hint="Ricevute e comunicazioni SDI" icon="fas fa-stream" />
           </Column>
 
-          <Column dataField={'Progressivo'} allowFiltering={false} />
+          <Column dataField={'progressivo'} allowFiltering={false} caption="Progressivo" />
 
           <Column
-            dataField={'Etichette'} allowFiltering={false}
+            dataField={'etichette'} allowFiltering={false} caption="Etichette"
           />
           <Column
-            dataField={'Data inserimento'}
+            dataField={'data_inserimento'}
             dataType={'date'}
             filterOperations={['=', '<=', '>=', 'between']}
           />
           <Column
-            dataField={'In carico a'}
+            dataField={'in_carico_a'} caption="In carico a"
           >
           </Column>
           <Column
-            dataField={'Data trasmissione'}
+            dataField={'data_trasmissione'}
+            caption="Data trasmissione"
             dataType={'date'}
           />
           <Column
-            dataField={'Numero fattura'}
+            dataField={'numero_fattura'}
+            caption="Numero fattura"
           />
           <Column
             dataField={'Data fattura'}
+            caption={'data_fattura'}
             dataType={'date'}
             allowFiltering={false}
           />
           <Column
-            dataField={'Partita IVA fornitore'}
+            dataField={'p_iva_fornitore'}
+            caption="Partita IVA fornitore"
             allowFiltering={false}
           />
           <Column
-            dataField={'CF fornitore'}
+            caption="CF fornitore"
+            dataField={'cf_fornitore'}
           />
           <Column
-            dataField={'Rag. Soc. Fornitore'}
+            caption="Rag. Soc. Fornitore"
+            dataField={'rag_soc_fornitore'}
           />
           <Column
             dataField={'P.IVA cliente'}
           />
           <Column
+            caption={'cf_cliente'}
             dataField={'CF cliente'}
           />
           <Column
-            dataField={'Rag. Soc. cliente'}
+            caption={'Rag. Soc. cliente'}
+            dataField={'rag_soc_cliente'}
           />
           <Column
-            dataField={'Codice cliente'}
+            caption={'Codice cliente'}
+            dataField={'codice_cliente'}
           />
           <Column
-            dataField={'Data prima scadenza'}
+            dataField={'data_prima_scadenza'}
+            caption={'Data prima scadenza'}
             dataType={'date'}
           />
           <Column
-            dataField={'Totale fattura'}
+            caption={'Totale fattura'}
+            dataField={'totale_fattura'}
           />
           <Column
-            dataField={'Codice valuta'}
+            caption={'Codice valuta'}
+            dataField={'codice_valuta'}
           />
           <Column
-            dataField={'Tipo documento'}
+            caption={'Tipo documento'}
+            dataField={'tipo_documento'}
           />
           <Column
-            dataField={'Formato trasmissione'}
+            caption={'Formato trasmissione'}
+            dataField={'formato_trasmissione'}
             allowFiltering={false}
           />
           <Column
-            dataField={'Canale principale'}
+            caption={'Canale principale'}
+            dataField={'canale_principale'}
           />
           <Column
-            dataField={'Fase fattura'}
+            caption={'Fase fattura'}
+            dataField={'fase_fattura'}
           />
           <Column
-            dataField={'Stato fattura'}
+            caption={'Stato fattura'}
+            dataField={'stato_fattura'}
             allowFiltering={false}
           />
           <Column
-            dataField={'Stato conservazione'}
+            caption={'Stato conservazione'}
+            dataField={'stato_conservazione'}
           />
           <Column
-            dataField={'Progressivo invio'}
+            caption={'Progressivo invio'}
+            dataField={'progressivo_invio'}
           />
           <Column
-            dataField={'Identificativo SDI'}
+            caption={'Identificativo SDI'}
+            dataField={'identificativo_SDI'}
           />
         </DataGrid>
         <Popup
+          width={550}
+          height={550}
+          title={"Scegli l'intervallo"}
           visible={isPopupVisible}
           hideOnOutsideClick={true}
           onHiding={togglePopup}
           contentRender={renderContent}
         />
+        <Popup
+          visible={popupRowDataVisible}
+          onHiding={handleHidingPopup}
+          dragEnabled={false}
+          hideOnOutsideClick={true}
+          showCloseButton={true}
+          showTitle={true}
+          title={"Fattura n° " + (popupRowData !== undefined && popupRowData.numero_fattura)}
+        >
+          <div className='row-data-container'>
+            <div className='item-of-invoice'>
+              <h4>PROGRESSIVO</h4>
+              <h5>{popupRowData !== undefined && popupRowData.progressivo}</h5>
+            </div>
+            <div className='item-of-invoice'>
+              <h4>ETICHETTE</h4>
+              <h5>{popupRowData !== undefined && popupRowData.etichette}</h5>
+            </div>
+            <div className='item-of-invoice'>
+              <h4>DATA INSERIMENTO:</h4>
+              <h5>{popupRowData !== undefined && popupRowData.data_inserimento}</h5>
+            </div>
+            <div className='item-of-invoice'>
+              <h4>PIVA FORNITORE</h4>
+              <h5>{popupRowData !== undefined && popupRowData.p_iva_fornitore}</h5>
+            </div>
+            <div className='item-of-invoice'>
+              <h4>CF CLIENTE</h4>
+              <h5>{popupRowData !== undefined && popupRowData.cf_cliente}</h5>
+            </div>
+          </div>
+        </Popup>
       </div>
     </div>
   );
