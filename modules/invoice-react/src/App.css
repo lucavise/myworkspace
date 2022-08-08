@@ -1,4 +1,6 @@
-.invoice-react .dx-card, .invoice-react .dx-datagrid-headers, .invoice-react .dx-datagrid-rowsview,
+.invoice-react .dx-card,
+.invoice-react .dx-datagrid-headers,
+.invoice-react .dx-datagrid-rowsview,
 .invoice-react .dx-datagrid-filter-panel {
   border: none;
 }
@@ -30,7 +32,7 @@
   height: 30px;
 }
 
-.dx-datagrid.dx-datagrid-borders > .dx-datagrid-header-panel {
+.dx-datagrid.dx-datagrid-borders>.dx-datagrid-header-panel {
   margin-bottom: 20px;
 }
 
@@ -46,4 +48,25 @@
   width: 24px;
   height: 24px;
   line-height: 24px;
+}
+
+.dx-data-row .dx-command-edit-with-icons a {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.row-data-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 30% 30% 30%;
+  align-items: center;
+  justify-content: space-between;
+  row-gap: 30px;
+}
+
+.dx-datagrid-header-panel .dx-widget.dx-button.dx-button-mode-contained.dx-button-normal.dx-button-has-text {
+  box-shadow: none;
+  border-bottom: 1px dotted;
+  border-radius: 0;
+  width: 300px;
+  text-align: left;
 }
