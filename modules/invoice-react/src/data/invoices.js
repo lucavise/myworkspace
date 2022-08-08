@@ -1,6 +1,6 @@
 export const invoices = [{
     "progressivo": 1,
-    "etichette": "categoria 3",
+    "etichette": "WWWW",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Maria D'orsù",
     "data_trasmissione": "09/11/2018",
@@ -52,7 +52,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 3,
-    "etichette": "categoria 4",
+    "etichette": "domanda domanda",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Nancy Davolio",
     "data_trasmissione": "09/12/2018",
@@ -78,7 +78,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 4,
-    "etichette": "categoria 4",
+    "etichette": "chichirichi 4",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Marcello Risto",
     "data_trasmissione": "09/12/2018",
@@ -104,7 +104,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 5,
-    "etichette": "categoria 1",
+    "etichette": "category 1",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Marcello Risto",
     "data_trasmissione": "09/12/2018",
@@ -130,7 +130,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 15,
-    "etichette": "categoria 1",
+    "etichette": "english 1",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Marcello Risto",
     "data_trasmissione": "05/05/2018",
@@ -156,7 +156,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 16,
-    "etichette": "categoria 1",
+    "etichette": "bye bye 1",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Marcello Risto",
     "data_trasmissione": "05/05/2018",
@@ -182,7 +182,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 7,
-    "etichette": "categoria 1",
+    "etichette": "seven 7 1",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Roberto Ribario",
     "data_trasmissione": "05/05/2018",
@@ -208,7 +208,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 8,
-    "etichette": "categoria 2",
+    "etichette": "masterpiece",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Roberto Ribario",
     "data_trasmissione": "15/03/2018",
@@ -234,7 +234,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 9,
-    "etichette": "categoria 2",
+    "etichette": "love",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Roberto Ribario",
     "data_trasmissione": "15/03/2018",
@@ -260,7 +260,7 @@ export const invoices = [{
     "identificativo_SDI": ""
 },{
     "progressivo": 10,
-    "etichette": "categoria 2",
+    "etichette": "rrrrrrr 2",
     "data_inserimento": "10/12/2018",
     "in_carico_a": "Roberto Ribario",
     "data_trasmissione": "15/03/2018",

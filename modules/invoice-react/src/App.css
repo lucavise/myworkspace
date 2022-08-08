@@ -70,3 +70,14 @@
   width: 300px;
   text-align: left;
 }
+
+.arrow-slider-container {
+  display: flex;
+  width: 100%;
+  column-gap: 15px;
+}
+
+.arrow-sx i, .arrow-dx i {
+  font-size: 24px;
+  cursor: pointer;
+}

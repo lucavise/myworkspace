@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import './App.css';
@@ -79,6 +79,8 @@ function App() {
   const userLogged = useUserLiferay();
   const [popupRowDataVisible, setPopupRowDataVisible] = React.useState(false);
   const [popupRowData, setPopupRowData] = React.useState();
+  const [allDataInGrid, setAllDataInGrid] = React.useState([]);
+  const [indexPopupRowData, setIndexPopupRowData] = React.useState(0);
 
   /*
   const onExporting = React.useCallback((e) => {
@@ -243,17 +245,43 @@ function App() {
   }
 
   const handleContentReadyOfDataGrid = (e) => {
-    console.log(e.component.getDataSource())
+    // ad ogni refresh dei dati si refresha anche la griglia. Quando tutti i dati sono in griglia
+    // me li prendo e li metto in uno stato. Mi servono per scorrerli dentro al popup in modalità slider
+    setAllDataInGrid(e.component.getDataSource()._store._array);
   }
 
   const handleRowClick = (e) => {
     setPopupRowDataVisible(true);
     setPopupRowData(e.data);
-    // console.log(e);
+    setIndexPopupRowData(e.rowIndex)
+    console.log(e.rowIndex);
   }
 
   const handleHidingPopup = () => {
     setPopupRowDataVisible(false);
+  }
+
+  // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
+  React.useEffect(() => {
+    setPopupRowData(allDataInGrid[indexPopupRowData]);
+  }, [indexPopupRowData]);
+
+  const handleRightArrowClickSliderInvoice = () => {
+    if ((indexPopupRowData + 1) <= (allDataInGrid.length - 1)) {
+      setIndexPopupRowData(indexPopupRowData + 1);
+    } else {
+      // non deve far nulla. Disabilitare l'icona graficamente facendo capire all'utente che si è all'ultimo elemento
+    }
+    // setPopupRowData(allDataInGrid[indexPopupRowData]);
+  }
+
+  const handleLeftArrowClickSliderInvoice = () => {
+    if ((indexPopupRowData - 1) >= 0) {
+      setIndexPopupRowData(indexPopupRowData - 1);
+    } else {
+      // non deve far nulla. Disabilitare l'icona graficamente facendo capire all'utente che si è al primo elemento
+    }
+    // setPopupRowData(allDataInGrid[indexPopupRowData]);
   }
 
   return (
@@ -476,6 +504,14 @@ function App() {
           showTitle={true}
           title={"Fattura n° " + (popupRowData !== undefined && popupRowData.numero_fattura)}
         >
+          <div className='arrow-slider-container'>
+            <div className='arrow-sx' onClick={handleLeftArrowClickSliderInvoice}>
+              <i class="dx-icon fas fa-chevron-left"></i>
+            </div>
+            <div className='arrow-dx' onClick={handleRightArrowClickSliderInvoice}>
+              <i class="dx-icon fas fa-chevron-right"></i>
+            </div>
+          </div>
           <div className='row-data-container'>
             <div className='item-of-invoice'>
               <h4>PROGRESSIVO</h4>
@@ -527,26 +563,6 @@ const filterBuilder = {
   allowHierarchicalFields: true,
 };
 
-// const filterValue = [['Employee', '=', 'Clark Morgan'], 'and', ['OrderDate', 'weekends']];
 const filterValue = [];
-
-/*
-const saleAmountHeaderFilters = [{
-  text: 'Less than $3000',
-  value: ['SaleAmount', '<', 3000],
-}, {
-  text: '$3000 - $5000',
-  value: [['SaleAmount', '>=', 3000], ['SaleAmount', '<', 5000]],
-}, {
-  text: '$5000 - $10000',
-  value: [['SaleAmount', '>=', 5000], ['SaleAmount', '<', 10000]],
-}, {
-  text: '$10000 - $20000',
-  value: [['SaleAmount', '>=', 10000], ['SaleAmount', '<', 20000]],
-}, {
-  text: 'Greater than $20000',
-  value: ['SaleAmount', '>=', 20000],
-}];
-*/
 
 export default App;
