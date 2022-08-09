@@ -1,5 +1,7 @@
 package proxyservicehub.application;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,11 +88,14 @@ public class ProxyServiceHubApplication extends Application {
 
 		// test da cancellare
 		User userInLiferay = UserLocalServiceUtil.fetchUserById(userid);
+		/*
 		ObjectMapper mapper = new ObjectMapper();
 		//Converting the Object to JSONString
+		mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 		String userInLiferayString = mapper.writeValueAsString(userInLiferay);
-
-		return userInLiferayString;
+		*/
+		String screenname = userInLiferay.getScreenName();
+		return screenname;
 	}
 
 	@POST
