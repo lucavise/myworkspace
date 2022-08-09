@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
+import './App.css';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
-import './App.css';
 import {
   DataGrid,
   Column,
@@ -11,11 +11,11 @@ import {
   FilterRow,
   FilterPanel,
   Selection,
-  Button,
   HeaderFilter,
   FilterBuilderPopup,
   LoadPanel,
   Toolbar,
+  Button,
   Item
 } from 'devextreme-react/data-grid';
 import { Popup, ToolbarItem } from 'devextreme-react/popup';
@@ -27,6 +27,7 @@ import { invoices } from './data/invoices';
 import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
 import { jsPDF } from 'jspdf';
 import { useUserLiferay } from './utils/useUserLiferay';
+import InvoiceDetailPopup from './components/InvoiceDetailPopup';
 
 const exportFormats = ['pdf'];
 const optionsInvoiceState = [{
@@ -244,17 +245,35 @@ function App() {
     );
   }
 
+  const openPopupInvoiceDetail = () => {
+    return (
+      <InvoiceDetailPopup
+        data={popupRowData}
+        indexRow={indexPopupRowData}
+        allDataInGrid={allDataInGrid}
+        popupRowDataVisible={popupRowDataVisible}>
+      </InvoiceDetailPopup>
+    );
+  }
+
   const handleContentReadyOfDataGrid = (e) => {
     // ad ogni refresh dei dati si refresha anche la griglia. Quando tutti i dati sono in griglia
     // me li prendo e li metto in uno stato. Mi servono per scorrerli dentro al popup in modalità slider
     setAllDataInGrid(e.component.getDataSource()._store._array);
   }
 
+  // gestisce click su icona di dettaglio
+  const handleViewDetailClick = (e) => {
+    setPopupRowDataVisible(true);
+    setPopupRowData(e.row.data);
+    setIndexPopupRowData(e.row.rowIndex);
+  }
+
+  // gestisce doppio click generico sulla riga
   const handleRowClick = (e) => {
     setPopupRowDataVisible(true);
     setPopupRowData(e.data);
     setIndexPopupRowData(e.rowIndex)
-    console.log(e.rowIndex);
   }
 
   const handleHidingPopup = () => {
@@ -282,6 +301,16 @@ function App() {
       // non deve far nulla. Disabilitare l'icona graficamente facendo capire all'utente che si è al primo elemento
     }
     // setPopupRowData(allDataInGrid[indexPopupRowData]);
+  }
+
+  /*
+  const handleChange = React.useCallback((newValue) => {
+    setPopupRowDataVisible(newValue);
+  }, []);
+  */
+
+  const handleChange = (newValue) => {
+    setPopupRowDataVisible(newValue);
   }
 
   return (
@@ -376,7 +405,7 @@ function App() {
             visible={true}
           />
           <Column type="buttons" width={150}>
-            <Button name="open" hint="Dettaglio" icon="fas fa-search-plus" />
+            <Button name="open" hint="Dettaglio" icon="fas fa-search-plus" onClick={handleViewDetailClick} />
             <Button name="view-signature-doc" hint="Visualizza documento principale in una nuova scheda [Firmato]" icon="fas fa-file-signature" />
             <Button name="" hint="Ricevute e comunicazioni SDI" icon="fas fa-stream" />
           </Column>
@@ -495,46 +524,17 @@ function App() {
           onHiding={togglePopup}
           contentRender={renderContent}
         />
-        <Popup
-          visible={popupRowDataVisible}
-          onHiding={handleHidingPopup}
-          dragEnabled={false}
-          hideOnOutsideClick={true}
-          showCloseButton={true}
-          showTitle={true}
-          title={"Fattura n° " + (popupRowData !== undefined && popupRowData.numero_fattura)}
-        >
-          <div className='arrow-slider-container'>
-            <div className='arrow-sx' onClick={handleLeftArrowClickSliderInvoice}>
-              <i class="dx-icon fas fa-chevron-left"></i>
-            </div>
-            <div className='arrow-dx' onClick={handleRightArrowClickSliderInvoice}>
-              <i class="dx-icon fas fa-chevron-right"></i>
-            </div>
+
+        {popupRowDataVisible &&
+          <div>
+            <InvoiceDetailPopup
+              allDataInGrid={allDataInGrid} 
+              popupRowData={popupRowData} 
+              popupRowDataVisible={popupRowDataVisible}
+              indexPopupRowData={indexPopupRowData}
+              onChange={handleChange} />
           </div>
-          <div className='row-data-container'>
-            <div className='item-of-invoice'>
-              <h4>PROGRESSIVO</h4>
-              <h5>{popupRowData !== undefined && popupRowData.progressivo}</h5>
-            </div>
-            <div className='item-of-invoice'>
-              <h4>ETICHETTE</h4>
-              <h5>{popupRowData !== undefined && popupRowData.etichette}</h5>
-            </div>
-            <div className='item-of-invoice'>
-              <h4>DATA INSERIMENTO:</h4>
-              <h5>{popupRowData !== undefined && popupRowData.data_inserimento}</h5>
-            </div>
-            <div className='item-of-invoice'>
-              <h4>PIVA FORNITORE</h4>
-              <h5>{popupRowData !== undefined && popupRowData.p_iva_fornitore}</h5>
-            </div>
-            <div className='item-of-invoice'>
-              <h4>CF CLIENTE</h4>
-              <h5>{popupRowData !== undefined && popupRowData.cf_cliente}</h5>
-            </div>
-          </div>
-        </Popup>
+        }
       </div>
     </div>
   );
