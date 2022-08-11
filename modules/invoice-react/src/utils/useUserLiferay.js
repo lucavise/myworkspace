@@ -2,18 +2,30 @@ import React from "react";
 
 export function useUserLiferay() {
 
-  const [user, setUser] = React.useState({"userid": "", "username": "", "email": ""});
+  const [loggedUser, setLoggedUser] = React.useState({});
+  const [userId, setUserId] = React.useState();
+  const [userAuthToken, setUserAuthToken] = React.useState("");
+  console.log(Liferay.authToken);
 
   React.useEffect(() => {
-    const companyId = window.themeDisplay.getCompanyId();
-    getUserLogged(companyId, setUser)
-  }, []);
-  return { user };
+    setUserAuthToken(Liferay.authToken);
+  }, [Liferay.authToken]);
+
+  return { userAuthToken };
 }
 
-const getUserLogged = (companyId, setUser) => {
+const getloggedUser = (companyId, setUserId, setUserAuthToken) => {
   const userid = window.themeDisplay.getUserId();
   const email = window.themeDisplay.getUserEmailAddress();
   const username = window.themeDisplay.getUserName();
-  setUser({"userid": userid, "username": username, "email": email});
+  let authToken = "";
+  try {
+    authToken = Liferay.authToken;
+    console.log("p --> " + authToken);
+  } catch (err) {
+    authToken = "";
+  }
+
+  setUserId(userid);
+  setUserAuthToken(authToken);
 }

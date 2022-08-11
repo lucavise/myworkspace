@@ -80,7 +80,6 @@ function useInvoiceDetailPopup(props) {
   const [popupRowData, setPopupRowData] = React.useState(props.popupRowData);
   const [indexPopupRowData, setIndexPopupRowData] = React.useState(props.indexPopupRowData);
   const [allDataInGrid, setAllDataInGrid] = React.useState(props.allDataInGrid);
-  console.log("uuuuuuuu");
 
   const handleHidingPopup = () => {
     setPopupRowDataVisible(false);
