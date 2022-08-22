@@ -350,7 +350,7 @@ export default function InvoiceApp() {
         shadingColor="rgba(0,0,0,0.4)"
         position={position}
         // onHiding={this.hideLoadPanel}
-        visible={true}
+        visible={loadPanelVisible}
         showIndicator={true}
         // shading={this.state.shading}
         showPane={true}
