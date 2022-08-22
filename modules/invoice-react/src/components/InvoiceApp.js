@@ -14,22 +14,23 @@ import {
   Selection,
   HeaderFilter,
   FilterBuilderPopup,
-  LoadPanel,
   Toolbar,
   Button,
   Item
 } from 'devextreme-react/data-grid';
+import { LoadPanel } from 'devextreme-react/load-panel';
 import { Popup, ToolbarItem } from 'devextreme-react/popup';
 import TreeView from 'devextreme-react/tree-view';
 import DateBox from 'devextreme-react/date-box';
 import DropDownBox from 'devextreme-react/drop-down-box';
 import SelectBox from 'devextreme-react/select-box';
 import { invoices } from '../data/invoices';
+import { invoicesFromWS } from '../data/invoicesFromWS';
 import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
 import { jsPDF } from 'jspdf';
-import { useUserLiferay } from '../utils/useUserLiferay';
 import InvoiceDetailPopup from './InvoiceDetailPopup';
 import axios from "axios";
+import Loading from "./Loading";
 
 const exportFormats = ['pdf'];
 const optionsInvoiceState = [{
@@ -84,6 +85,7 @@ export default function InvoiceApp() {
   const [popupRowData, setPopupRowData] = React.useState();
   const [allDataInGrid, setAllDataInGrid] = React.useState([]);
   const [indexPopupRowData, setIndexPopupRowData] = React.useState(0);
+  const [loadPanelVisible, setLoadPanelVisible] = React.useState(true);
 
   /*
   const onExporting = React.useCallback((e) => {
@@ -107,6 +109,7 @@ export default function InvoiceApp() {
     console.log("async call")
     const responseInvoiceData = await axios(uri);
     setIsLoading(false);
+    setLoadPanelVisible(false)
     setInvoiceData(responseInvoiceData.data);
     console.log("response data");
     console.log(responseInvoiceData.data);
@@ -114,7 +117,7 @@ export default function InvoiceApp() {
 
   React.useEffect(() => {
     console.log("uri");
-    uri = "http://localhost:8180/o/proxy-service-hub/getCardsByParam?p_auth=" + Liferay.authToken;
+    uri = themeDisplay.getPortalURL() + "/o/proxy-service-hub/getCardsByParam?p_auth=" + Liferay.authToken;
     console.log(uri);
     getInvoiceData();
   }, []);
@@ -335,14 +338,33 @@ export default function InvoiceApp() {
     setPopupRowDataVisible(newValue);
   }
 
+  const calculateCellValue = (e) => {
+    console.log(e);
+  }
+
+  const position = { of: '#datagrid-invoice' };
+
   return (
-    <div className='panel-container'>
-      {isLoading ? <div>Caricando..</div> :
+    <div className='panel-container' id="datagrid-invoice">
+      <LoadPanel
+        shadingColor="rgba(0,0,0,0.4)"
+        position={position}
+        // onHiding={this.hideLoadPanel}
+        visible={true}
+        showIndicator={true}
+        // shading={this.state.shading}
+        showPane={true}
+        // hideOnOutsideClick={this.state.hideOnOutsideClick}
+        height={100}
+        width={250}
+      />
+      {isLoading ? <div>Caricando.. </div>
+         :
         <DataGrid
           ref={dataGridRef}
           id="dataGrid"
-          dataSource={invoices}
-          keyExpr="progressivo"
+          dataSource={invoiceData.RetrieveCardsByParamResult.Cards}
+          keyExpr="CardProg"
           className={'dx-card wide-card'}
           allowColumnReordering={true}
           allowColumnResizing={true}
@@ -357,7 +379,6 @@ export default function InvoiceApp() {
           <Selection mode="multiple" selectAllMode={true} deferred={true} />
           <Paging defaultPageSize={10} />
           <Pager showPageSizeSelector={true} showInfo={true} />
-          <LoadPanel enabled={true} />
           <Export enabled={true} formats={exportFormats} allowExportSelectedData={true} />
           <FilterRow visible={true} />
           <FilterPanel visible={true} />
@@ -432,110 +453,82 @@ export default function InvoiceApp() {
             <Button name="" hint="Ricevute e comunicazioni SDI" icon="fas fa-stream" />
           </Column>
 
-          <Column dataField={'progressivo'} allowFiltering={false} caption="Progressivo" />
-
           <Column
-            dataField={'etichette'} allowFiltering={false} caption="Etichette"
+            caption={'CardProg'}
+            dataField={'CardProg'}
           />
           <Column
-            dataField={'data_inserimento'}
-            dataType={'date'}
-            filterOperations={['=', '<=', '>=', 'between']}
+            caption={'Etichette'}
           />
           <Column
-            dataField={'in_carico_a'} caption="In carico a"
-          >
-          </Column>
-          <Column
-            dataField={'data_trasmissione'}
-            caption="Data trasmissione"
-            dataType={'date'}
+            caption={'Data inserimento'}
+            dataField={'Indexes[1].FieldValue'}
           />
           <Column
-            dataField={'numero_fattura'}
-            caption="Numero fattura"
+            caption={'In carico a'}
+            dataField={'Indexes[2].FieldValue'}
           />
           <Column
-            dataField={'Data fattura'}
-            caption={'data_fattura'}
-            dataType={'date'}
-            allowFiltering={false}
+            caption={'Data trasmissione'}
+            dataField={'Indexes[3].FieldValue'}
           />
           <Column
-            dataField={'p_iva_fornitore'}
-            caption="Partita IVA fornitore"
-            allowFiltering={false}
+            caption={'Numero Fattura'}
+            dataField={'Indexes[4].FieldValue'}
           />
           <Column
-            caption="CF fornitore"
-            dataField={'cf_fornitore'}
+            caption={'Data Fattura'}
+            dataField={'Indexes[5].FieldValue'}
           />
           <Column
-            caption="Rag. Soc. Fornitore"
-            dataField={'rag_soc_fornitore'}
+            caption={'P. IVA FORNITORE'}
+            dataField={'Indexes[9].FieldValue'}
           />
           <Column
-            dataField={'P.IVA cliente'}
+            caption={'CF FORNITORE'}
+            dataField={'Indexes[10].FieldValue'}
           />
           <Column
-            caption={'cf_cliente'}
-            dataField={'CF cliente'}
+            caption={'RAG. SOC. FORNITORE'}
+            dataField={'Indexes[11].FieldValue'}
           />
           <Column
-            caption={'Rag. Soc. cliente'}
-            dataField={'rag_soc_cliente'}
-          />
-          <Column
-            caption={'Codice cliente'}
-            dataField={'codice_cliente'}
-          />
-          <Column
-            dataField={'data_prima_scadenza'}
             caption={'Data prima scadenza'}
-            dataType={'date'}
+            dataField={'Indexes[14].FieldValue'}
           />
           <Column
-            caption={'Totale fattura'}
-            dataField={'totale_fattura'}
+            caption={'TOTALE FATTURA'}
+            dataField={'Indexes[15].FieldValue'}
           />
           <Column
             caption={'Codice valuta'}
-            dataField={'codice_valuta'}
+            dataField={'Indexes[16].FieldValue'}
           />
           <Column
             caption={'Tipo documento'}
-            dataField={'tipo_documento'}
+            dataField={'Indexes[17].FieldValue'}
           />
           <Column
             caption={'Formato trasmissione'}
-            dataField={'formato_trasmissione'}
-            allowFiltering={false}
+            dataField={'Indexes[23].FieldValue'}
           />
           <Column
             caption={'Canale principale'}
-            dataField={'canale_principale'}
+            dataField={'Indexes[19].FieldValue'}
           />
           <Column
             caption={'Fase fattura'}
-            dataField={'fase_fattura'}
+            dataField={'Indexes[20].FieldValue'}
           />
           <Column
             caption={'Stato fattura'}
-            dataField={'stato_fattura'}
-            allowFiltering={false}
+            dataField={'Indexes[21].FieldValue'}
           />
           <Column
             caption={'Stato conservazione'}
-            dataField={'stato_conservazione'}
+            dataField={'Indexes[22].FieldValue'}
           />
-          <Column
-            caption={'Progressivo invio'}
-            dataField={'progressivo_invio'}
-          />
-          <Column
-            caption={'Identificativo SDI'}
-            dataField={'identificativo_SDI'}
-          />
+
         </DataGrid>
       }
       <Popup
