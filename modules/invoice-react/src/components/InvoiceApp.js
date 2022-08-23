@@ -111,8 +111,6 @@ export default function InvoiceApp() {
     setIsLoading(false);
     setLoadPanelVisible(false)
     setInvoiceData(responseInvoiceData.data);
-    console.log("response data");
-    console.log(responseInvoiceData.data);
   };
 
   React.useEffect(() => {
@@ -352,14 +350,16 @@ export default function InvoiceApp() {
         // onHiding={this.hideLoadPanel}
         visible={loadPanelVisible}
         showIndicator={true}
-        // shading={this.state.shading}
-        showPane={true}
-        // hideOnOutsideClick={this.state.hideOnOutsideClick}
-        height={100}
-        width={250}
-      />
-      {isLoading ? <div>Caricando.. </div>
-         :
+        shading={false}
+        // showPane={true}
+        // hideOnOutsideClick={hideOnOutsideClick}
+        height={200}
+        width={400}
+      >
+      </LoadPanel>
+
+      {isLoading ? <div style={{display: "none"}}></div>
+        :
         <DataGrid
           ref={dataGridRef}
           id="dataGrid"

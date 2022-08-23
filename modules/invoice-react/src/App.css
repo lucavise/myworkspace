@@ -100,3 +100,7 @@ h4.metadata-field {
   margin-bottom: 20px;
   align-items: center;
 }
+
+.dx-loadpanel-message {
+  display: block !important;
+}
