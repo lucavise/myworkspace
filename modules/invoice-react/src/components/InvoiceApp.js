@@ -107,15 +107,17 @@ export default function InvoiceApp() {
 
   const getInvoiceData = async () => {
     console.log("async call")
-    const responseInvoiceData = await axios(uri);
-    setIsLoading(false);
-    setLoadPanelVisible(false)
-    setInvoiceData(responseInvoiceData.data);
+    axios.get(uri).then(res => {
+      setInvoiceData(res.data);
+      console.log(res);
+      setIsLoading(false);
+      setLoadPanelVisible(false)
+    });
   };
 
   React.useEffect(() => {
     console.log("uri");
-    uri = themeDisplay.getPortalURL() + "/o/proxy-service-hub/getCardsByParam?p_auth=" + Liferay.authToken;
+    uri = themeDisplay.getPortalURL() + "/o/proxy-service-hub/retrieveCardsByParam?p_auth=" + Liferay.authToken;
     console.log(uri);
     getInvoiceData();
   }, []);
@@ -293,7 +295,8 @@ export default function InvoiceApp() {
   }
 
   // gestisce doppio click generico sulla riga
-  const handleRowClick = (e) => {
+  const handleRowDblClick = (e) => {
+    console.log(e);
     setPopupRowDataVisible(true);
     setPopupRowData(e.data);
     setIndexPopupRowData(e.rowIndex)
@@ -358,13 +361,13 @@ export default function InvoiceApp() {
       >
       </LoadPanel>
 
-      {isLoading ? <div style={{display: "none"}}></div>
+      {isLoading ? <div style={{ display: "none" }}></div>
         :
         <DataGrid
           ref={dataGridRef}
           id="dataGrid"
-          dataSource={invoiceData.RetrieveCardsByParamResult.Cards}
-          keyExpr="CardProg"
+          dataSource={invoiceData.cards}
+          keyExpr="prog"
           className={'dx-card wide-card'}
           allowColumnReordering={true}
           allowColumnResizing={true}
@@ -373,7 +376,7 @@ export default function InvoiceApp() {
           showColumnLines={false}
           showRowLines={true}
           rowAlternationEnabled={true}
-          onRowDblClick={handleRowClick}
+          onRowDblClick={handleRowDblClick}
           onContentReady={handleContentReadyOfDataGrid}
         >
           <Selection mode="multiple" selectAllMode={true} deferred={true} />
@@ -454,79 +457,103 @@ export default function InvoiceApp() {
           </Column>
 
           <Column
-            caption={'CardProg'}
-            dataField={'CardProg'}
+            caption={'Progressivo'}
+            dataField={'prog'}
           />
           <Column
             caption={'Etichette'}
+            dataField={'additives[0].AdditiveValue'}
           />
           <Column
             caption={'Data inserimento'}
-            dataField={'Indexes[1].FieldValue'}
+            dataField={'fieldTypes[1].value'}
           />
           <Column
             caption={'In carico a'}
-            dataField={'Indexes[2].FieldValue'}
+            dataField={'fieldTypes[2].value'}
           />
           <Column
             caption={'Data trasmissione'}
-            dataField={'Indexes[3].FieldValue'}
           />
           <Column
             caption={'Numero Fattura'}
-            dataField={'Indexes[4].FieldValue'}
+            dataField={'fieldTypes[4].value'}
           />
           <Column
             caption={'Data Fattura'}
-            dataField={'Indexes[5].FieldValue'}
+            dataField={'fieldTypes[5].value'}
           />
           <Column
             caption={'P. IVA FORNITORE'}
-            dataField={'Indexes[9].FieldValue'}
+            dataField={'fieldTypes[6].value'}
           />
           <Column
             caption={'CF FORNITORE'}
-            dataField={'Indexes[10].FieldValue'}
+            dataField={'fieldTypes[7].value'}
           />
           <Column
             caption={'RAG. SOC. FORNITORE'}
-            dataField={'Indexes[11].FieldValue'}
+            dataField={'fieldTypes[8].value'}
+          />
+          <Column
+            caption={'P.IVA CLIENTE'}
+            dataField={'fieldTypes[9].value'}
+          />
+          <Column
+            caption={'CF CLIENTE'}
+            dataField={'fieldTypes[10].value'}
+          />
+          <Column
+            caption={'RAG. SOC. CLIENTE'}
+            dataField={'fieldTypes[11].value'}
+          />
+          <Column
+            caption={'P. IVA CLIENTE'}
+            dataField={'fieldTypes[12].value'}
           />
           <Column
             caption={'Data prima scadenza'}
-            dataField={'Indexes[14].FieldValue'}
+            dataField={'fieldTypes[14].value'}
           />
           <Column
             caption={'TOTALE FATTURA'}
-            dataField={'Indexes[15].FieldValue'}
+            dataField={'fieldTypes[15].value'}
           />
           <Column
             caption={'Codice valuta'}
-            dataField={'Indexes[16].FieldValue'}
+            dataField={'fieldTypes[16].value'}
           />
           <Column
             caption={'Tipo documento'}
-            dataField={'Indexes[17].FieldValue'}
+            dataField={'fieldTypes[17].value'}
           />
           <Column
             caption={'Formato trasmissione'}
-            dataField={'Indexes[23].FieldValue'}
+            
           />
           <Column
             caption={'Canale principale'}
-            dataField={'Indexes[19].FieldValue'}
+            dataField={'fieldTypes[19].value'}
           />
           <Column
             caption={'Fase fattura'}
-            dataField={'Indexes[20].FieldValue'}
+            dataField={'fieldTypes[20].value'}
           />
           <Column
             caption={'Stato fattura'}
-            dataField={'Indexes[21].FieldValue'}
+            dataField={'fieldTypes[21].value'}
           />
           <Column
             caption={'Stato conservazione'}
-            dataField={'Indexes[22].FieldValue'}
+            dataField={'fieldTypes[22].value'}
+          />
+          <Column
+            caption={'Progressivo invio'}
+            dataField={'fieldTypes[23].value'}
+          />
+          <Column
+            caption={'Identificativo SDI'}
+            dataField={'fieldTypes[24].value'}
           />
 
         </DataGrid>

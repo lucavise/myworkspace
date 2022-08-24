@@ -29,7 +29,7 @@ export default function InvoiceDetailPopup(props) {
       hideOnOutsideClick={true}
       showCloseButton={true}
       showTitle={true}
-      title={"Fattura n° " + (popupRowData !== undefined && popupRowData.numero_fattura)}
+      title={"Fattura n° " + (popupRowData !== undefined && popupRowData.prog)}
     >
       <div className='arrow-slider-container header-invoice-detail'>
         <div className='arrow-sx' onClick={handleLeftArrowClickSliderInvoice}>
@@ -44,7 +44,7 @@ export default function InvoiceDetailPopup(props) {
       <div className='row-data-container invoice-detail'>
         <div className='item-of-invoice'>
           <h5>Numero fattura</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.progressivo}</h4>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.prog}</h4>
         </div>
         <div className='item-of-invoice'>
           <h5>Data fattura</h5>
