@@ -30,6 +30,7 @@ import { jsPDF } from 'jspdf';
 import InvoiceDetailPopup from './InvoiceDetailPopup';
 import axios from "axios";
 import Loading from "./Loading";
+import { inputSearchObj } from "../data/inputSearchObj";
 
 const exportFormats = ['pdf'];
 const optionsInvoiceState = [{
@@ -499,8 +500,10 @@ function useInvoiceApp(props) {
   const [loadPanelVisible, setLoadPanelVisible] = React.useState(true);
   const [invoiceData, setInvoiceData] = React.useState();
   const [isLoading, setIsLoading] = React.useState(true);
-  const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + "/o/proxy-service-hub/retrieveCardsByParam?p_auth=" + Liferay.authToken);
+  const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + "/o/proxy-service-hub/retrieveCardsByParamGet?p_auth=" + Liferay.authToken);
   const [isPopupVisible, setPopupVisibility] = React.useState(false);
+  const [inputSearch, setInputSearch] = React.useState(inputSearchObj);
+
 
   const getInvoiceData = async () => {
     console.log("async call")
@@ -542,9 +545,15 @@ function useInvoiceApp(props) {
   }
 
   const handleItemSelectionChangedInvoiceState = (e) => {
-    console.log("select");
     setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
-    console.log(e);
+    // console.log(e);
+    // console.log(e.component.getSelectedNodeKeys())
+    inputSearch.paramIn.SearchCriteria.Fields.push({
+      "FieldValueTo": "'DA LAVORARE'",
+      "FieldId": "21",
+      "FieldValue": "'DA LAVORARE'"
+    });
+    console.log(inputSearch);
   }
 
   const handleChangeInvoiceType = (e) => {
