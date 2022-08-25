@@ -29,7 +29,7 @@ export default function InvoiceDetailPopup(props) {
       hideOnOutsideClick={true}
       showCloseButton={true}
       showTitle={true}
-      title={"Fattura n° " + (popupRowData !== undefined && popupRowData.prog)}
+      title={"Fattura n° " + (popupRowData !== undefined && popupRowData.prog) + " - " + (popupRowData !== undefined && popupRowData.fieldTypes[5].value)}
     >
       <div className='arrow-slider-container header-invoice-detail'>
         <div className='arrow-sx' onClick={handleLeftArrowClickSliderInvoice}>
@@ -48,27 +48,63 @@ export default function InvoiceDetailPopup(props) {
         </div>
         <div className='item-of-invoice'>
           <h5>Data fattura</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.data_fattura}</h4>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[5].value}</h4>
         </div>
         <div className='item-of-invoice'>
           <h5>Totale fattura</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.totale_fattura}</h4>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[15].value}</h4>
         </div>
         <div className='item-of-invoice'>
           <h5>Codice valuta</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.codice_valuta}</h4>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[16].value}</h4>
         </div>
         <div className='item-of-invoice'>
           <h5>Formato trasmissione</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.formato_trasmissione}</h4>
+          <h4 className='textColorDefault metadata-field'></h4>
         </div>
         <div className='item-of-invoice'>
-          <h5>Partita iva cliente</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.p_iva_cliente}</h4>
+          <h5>Partita IVA Cliente</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[12].value}</h4>
         </div>
         <div className='item-of-invoice'>
-          <h5>Codice fiscale cliente</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.cf_cliente}</h4>
+          <h5>Codice Fiscale Cliente</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[10].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Rag. Soc. Cliente</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[11].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Rag. Soc. Fornitore</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[8].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Data Trasmissione</h5>
+          <h4 className='textColorDefault metadata-field'></h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Data Prima Scadenza</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[14].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Tipo Documento</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[17].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Progressivo Invio</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[23].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Stato Fattura</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[21].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>In carico a</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[2].value}</h4>
+        </div>
+        <div className='item-of-invoice'>
+          <h5>Identificativo SDI</h5>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[24].value}</h4>
         </div>
       </div>
     </Popup>

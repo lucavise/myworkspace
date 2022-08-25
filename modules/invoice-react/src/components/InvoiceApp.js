@@ -13,7 +13,6 @@ import {
   FilterPanel,
   Selection,
   HeaderFilter,
-  FilterBuilderPopup,
   Toolbar,
   Button,
   Item
@@ -75,53 +74,68 @@ const optionsPeriodTypePopup = [{
 
 
 export default function InvoiceApp() {
-  const [invoiceState, setInvoiceState] = React.useState();
-  const [invoiceType, setInvoiceType] = React.useState();
-  const [invoicePeriod, setInvoicePeriod] = React.useState();
-  const [typePeriodPopup, setTypePeriodPopup] = React.useState();
-  const [multiValuesInvoiceState, setMultiValuesInvoiceState] = React.useState([1]);
-  const [treeViewMine, setTreeViewMine] = React.useState();
-  const [popupRowDataVisible, setPopupRowDataVisible] = React.useState(false);
-  const [popupRowData, setPopupRowData] = React.useState();
-  const [allDataInGrid, setAllDataInGrid] = React.useState([]);
-  const [indexPopupRowData, setIndexPopupRowData] = React.useState(0);
-  const [loadPanelVisible, setLoadPanelVisible] = React.useState(true);
+
+  const [
+    invoiceState,
+    setInvoiceState,
+    invoiceType,
+    setInvoiceType,
+    invoicePeriod,
+    setInvoicePeriod,
+    typePeriodPopup,
+    setTypePeriodPopup,
+    multiValuesInvoiceState,
+    setMultiValuesInvoiceState,
+    treeViewMine,
+    setTreeViewMine,
+    popupRowDataVisible,
+    setPopupRowDataVisible,
+    popupRowData,
+    setPopupRowData,
+    allDataInGrid,
+    setAllDataInGrid,
+    indexPopupRowData,
+    setIndexPopupRowData,
+    loadPanelVisible,
+    setLoadPanelVisible,
+    invoiceData,
+    setInvoiceData,
+    isLoading,
+    setIsLoading,
+    uriRetrieveCards,
+    getInvoiceData,
+    handleContentReadyOfDataGrid,
+    handleViewDetailClick,
+    handleRowDblClick,
+    handleItemSelectionChangedInvoiceState,
+    handleChangeInvoiceType,
+    handleChangeInvoicePeriod,
+    handleChangeTypePeriodPopup,
+    handleChange,
+    handleValueChangedInvoiceState,
+    isPopupVisible,
+    setPopupVisibility,
+    togglePopup
+  ] = useInvoiceApp();
 
   /*
-  const onExporting = React.useCallback((e) => {
-    const doc = new jsPDF();
-
-    exportDataGrid({
-      jsPDFDocument: doc,
-      component: e.component,
-      indent: 5,
-    }).then(() => {
-      doc.save('Companies.pdf');
-    });
-  });
+  * USE EFFECT
   */
-
-  const [invoiceData, setInvoiceData] = React.useState();
-  const [isLoading, setIsLoading] = React.useState(true);
-  let uri = "";
-
-  const getInvoiceData = async () => {
-    console.log("async call")
-    axios.get(uri).then(res => {
-      setInvoiceData(res.data);
-      console.log(res);
-      setIsLoading(false);
-      setLoadPanelVisible(false)
-    });
-  };
-
   React.useEffect(() => {
-    console.log("uri");
-    uri = themeDisplay.getPortalURL() + "/o/proxy-service-hub/retrieveCardsByParam?p_auth=" + Liferay.authToken;
-    console.log(uri);
+    console.log(uriRetrieveCards);
     getInvoiceData();
   }, []);
 
+  // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
+  React.useEffect(() => {
+    setPopupRowData(allDataInGrid[indexPopupRowData]);
+  }, [indexPopupRowData]);
+
+  /*
+  *
+  */
+
+  // EXPORT
   const dataGridRef = React.useRef(null);
   function exportGrid() {
     const doc = new jsPDF();
@@ -134,45 +148,7 @@ export default function InvoiceApp() {
     });
   }
 
-  const handleValueChangedInvoiceState = (e) => {
-    const treeView = (e.component.selectItem && e.component)
-      || (treeViewMine && treeViewMine.instance);
-
-    if (treeView) {
-      if (e.value === null) {
-        treeView.unselectAll();
-      } else {
-        const values = e.value || multiValuesInvoiceState;
-        values && values.forEach((value) => {
-          treeView.selectItem(value);
-        });
-      }
-    }
-
-    if (e.value !== undefined) {
-      setMultiValuesInvoiceState(e.value);
-    }
-  }
-
-  const handleItemSelectionChangedInvoiceState = (e) => {
-    console.log("select");
-    setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
-    console.log(e);
-  }
-
-  const handleChangeInvoiceType = (e) => {
-    setInvoiceType(e.value);
-  }
-
-  const handleChangeInvoicePeriod = (e) => {
-    setInvoicePeriod(e.value);
-  }
-
-  const handleChangeTypePeriodPopup = (e) => {
-    console.log(e.value);
-    setTypePeriodPopup(e.value);
-  }
-
+  // BOTTONI
   const buttonDownloadJobOptions = {
     hint: 'Abilita salvataggi automatici',
     icon: "fas fa-hdd"
@@ -189,12 +165,6 @@ export default function InvoiceApp() {
 
   const buttonMoreOptions = {
     icon: "fas fa-ellipsis-v"
-  };
-
-  const [isPopupVisible, setPopupVisibility] = React.useState(false);
-
-  const togglePopup = () => {
-    setPopupVisibility(!isPopupVisible);
   };
 
   const buttonForPopup = {
@@ -270,79 +240,6 @@ export default function InvoiceApp() {
     );
   }
 
-  const openPopupInvoiceDetail = () => {
-    return (
-      <InvoiceDetailPopup
-        data={popupRowData}
-        indexRow={indexPopupRowData}
-        allDataInGrid={allDataInGrid}
-        popupRowDataVisible={popupRowDataVisible}>
-      </InvoiceDetailPopup>
-    );
-  }
-
-  const handleContentReadyOfDataGrid = (e) => {
-    // ad ogni refresh dei dati si refresha anche la griglia. Quando tutti i dati sono in griglia
-    // me li prendo e li metto in uno stato. Mi servono per scorrerli dentro al popup in modalità slider
-    setAllDataInGrid(e.component.getDataSource()._store._array);
-  }
-
-  // gestisce click su icona di dettaglio
-  const handleViewDetailClick = (e) => {
-    setPopupRowDataVisible(true);
-    setPopupRowData(e.row.data);
-    setIndexPopupRowData(e.row.rowIndex);
-  }
-
-  // gestisce doppio click generico sulla riga
-  const handleRowDblClick = (e) => {
-    console.log(e);
-    setPopupRowDataVisible(true);
-    setPopupRowData(e.data);
-    setIndexPopupRowData(e.rowIndex)
-  }
-
-  const handleHidingPopup = () => {
-    setPopupRowDataVisible(false);
-  }
-
-  // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
-  React.useEffect(() => {
-    setPopupRowData(allDataInGrid[indexPopupRowData]);
-  }, [indexPopupRowData]);
-
-  const handleRightArrowClickSliderInvoice = () => {
-    if ((indexPopupRowData + 1) <= (allDataInGrid.length - 1)) {
-      setIndexPopupRowData(indexPopupRowData + 1);
-    } else {
-      // non deve far nulla. Disabilitare l'icona graficamente facendo capire all'utente che si è all'ultimo elemento
-    }
-    // setPopupRowData(allDataInGrid[indexPopupRowData]);
-  }
-
-  const handleLeftArrowClickSliderInvoice = () => {
-    if ((indexPopupRowData - 1) >= 0) {
-      setIndexPopupRowData(indexPopupRowData - 1);
-    } else {
-      // non deve far nulla. Disabilitare l'icona graficamente facendo capire all'utente che si è al primo elemento
-    }
-    // setPopupRowData(allDataInGrid[indexPopupRowData]);
-  }
-
-  /*
-  const handleChange = React.useCallback((newValue) => {
-    setPopupRowDataVisible(newValue);
-  }, []);
-  */
-
-  const handleChange = (newValue) => {
-    setPopupRowDataVisible(newValue);
-  }
-
-  const calculateCellValue = (e) => {
-    console.log(e);
-  }
-
   const position = { of: '#datagrid-invoice' };
 
   return (
@@ -381,11 +278,13 @@ export default function InvoiceApp() {
         >
           <Selection mode="multiple" selectAllMode={true} deferred={true} />
           <Paging defaultPageSize={10} />
-          <Pager showPageSizeSelector={true} showInfo={true} />
+          <Pager
+            visible={true}
+            showPageSizeSelector={true}
+            showInfo={true}
+            showNavigationButtons={true} />
           <Export enabled={true} formats={exportFormats} allowExportSelectedData={true} />
           <FilterRow visible={true} />
-          <FilterPanel visible={true} />
-          <FilterBuilderPopup position={filterBuilderPopupPosition} />
           <Toolbar>
             <Item location="before">
               <DropDownBox
@@ -529,7 +428,7 @@ export default function InvoiceApp() {
           />
           <Column
             caption={'Formato trasmissione'}
-            
+
           />
           <Column
             caption={'Canale principale'}
@@ -586,23 +485,142 @@ function getOrderDay(rowData) {
   return (new Date(rowData.OrderDate)).getDay();
 }
 
-const filterBuilderPopupPosition = {
-  of: window,
-  at: 'top',
-  my: 'top',
-  offset: { y: 10 },
-};
+function useInvoiceApp(props) {
+  const [invoiceState, setInvoiceState] = React.useState();
+  const [invoiceType, setInvoiceType] = React.useState();
+  const [invoicePeriod, setInvoicePeriod] = React.useState();
+  const [typePeriodPopup, setTypePeriodPopup] = React.useState();
+  const [multiValuesInvoiceState, setMultiValuesInvoiceState] = React.useState([1]);
+  const [treeViewMine, setTreeViewMine] = React.useState();
+  const [popupRowDataVisible, setPopupRowDataVisible] = React.useState(false);
+  const [popupRowData, setPopupRowData] = React.useState();
+  const [allDataInGrid, setAllDataInGrid] = React.useState([]);
+  const [indexPopupRowData, setIndexPopupRowData] = React.useState(0);
+  const [loadPanelVisible, setLoadPanelVisible] = React.useState(true);
+  const [invoiceData, setInvoiceData] = React.useState();
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + "/o/proxy-service-hub/retrieveCardsByParam?p_auth=" + Liferay.authToken);
+  const [isPopupVisible, setPopupVisibility] = React.useState(false);
 
-const filterBuilder = {
-  customOperations: [{
-    name: 'weekends',
-    caption: 'Weekends',
-    dataTypes: ['date'],
-    icon: 'check',
-    hasValue: false,
-    calculateFilterExpression: () => [[getOrderDay, '=', 0], 'or', [getOrderDay, '=', 6]],
-  }],
-  allowHierarchicalFields: true,
-};
+  const getInvoiceData = async () => {
+    console.log("async call")
+    axios.get(uriRetrieveCards).then(res => {
+      setInvoiceData(res.data);
+      console.log(res);
+      setIsLoading(false);
+      setLoadPanelVisible(false)
+    });
+  };
 
-const filterValue = [];
+  const togglePopup = () => {
+    setPopupVisibility(!isPopupVisible);
+  };
+
+  // cambio di stato nella multiselection dello stato fattura
+  const handleValueChangedInvoiceState = (e) => {
+    const treeView = (e.component.selectItem && e.component)
+      || (treeViewMine && treeViewMine.instance);
+
+    if (treeView) {
+      if (e.value === null) {
+        treeView.unselectAll();
+      } else {
+        const values = e.value || multiValuesInvoiceState;
+        values && values.forEach((value) => {
+          treeView.selectItem(value);
+        });
+      }
+    }
+
+    if (e.value !== undefined) {
+      setMultiValuesInvoiceState(e.value);
+    }
+  }
+
+  const handleChange = (newValue) => {
+    setPopupRowDataVisible(newValue);
+  }
+
+  const handleItemSelectionChangedInvoiceState = (e) => {
+    console.log("select");
+    setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
+    console.log(e);
+  }
+
+  const handleChangeInvoiceType = (e) => {
+    setInvoiceType(e.value);
+  }
+
+  const handleChangeInvoicePeriod = (e) => {
+    setInvoicePeriod(e.value);
+  }
+
+  const handleChangeTypePeriodPopup = (e) => {
+    console.log(e.value);
+    setTypePeriodPopup(e.value);
+  }
+
+  const handleContentReadyOfDataGrid = (e) => {
+    // ad ogni refresh dei dati si refresha anche la griglia. Quando tutti i dati sono in griglia
+    // me li prendo e li metto in uno stato. Mi servono per scorrerli dentro al popup in modalità slider
+    setAllDataInGrid(e.component.getDataSource()._store._array);
+  }
+
+  // gestisce click su icona di dettaglio
+  const handleViewDetailClick = (e) => {
+    setPopupRowDataVisible(true);
+    setPopupRowData(e.row.data);
+    setIndexPopupRowData(e.row.rowIndex);
+  }
+
+  // gestisce doppio click generico sulla riga
+  const handleRowDblClick = (e) => {
+    console.log(e);
+    setPopupRowDataVisible(true);
+    setPopupRowData(e.data);
+    setIndexPopupRowData(e.rowIndex)
+  }
+
+  return [
+    invoiceState,
+    setInvoiceState,
+    invoiceType,
+    setInvoiceType,
+    invoicePeriod,
+    setInvoicePeriod,
+    typePeriodPopup,
+    setTypePeriodPopup,
+    multiValuesInvoiceState,
+    setMultiValuesInvoiceState,
+    treeViewMine,
+    setTreeViewMine,
+    popupRowDataVisible,
+    setPopupRowDataVisible,
+    popupRowData,
+    setPopupRowData,
+    allDataInGrid,
+    setAllDataInGrid,
+    indexPopupRowData,
+    setIndexPopupRowData,
+    loadPanelVisible,
+    setLoadPanelVisible,
+    invoiceData,
+    setInvoiceData,
+    isLoading,
+    setIsLoading,
+    uriRetrieveCards,
+    getInvoiceData,
+    handleContentReadyOfDataGrid,
+    handleViewDetailClick,
+    handleRowDblClick,
+    handleItemSelectionChangedInvoiceState,
+    handleChangeInvoiceType,
+    handleChangeInvoicePeriod,
+    handleChangeTypePeriodPopup,
+    handleChange,
+    handleValueChangedInvoiceState,
+    isPopupVisible,
+    setPopupVisibility,
+    togglePopup
+  ]
+}
