@@ -31,6 +31,7 @@ import InvoiceDetailPopup from './InvoiceDetailPopup';
 import axios from "axios";
 import Loading from "./Loading";
 import { inputSearchObj } from "../data/inputSearchObj";
+import * as Constants from "../utils/constants";
 
 const exportFormats = ['pdf'];
 const optionsInvoiceState = [{
@@ -116,14 +117,20 @@ export default function InvoiceApp() {
     handleValueChangedInvoiceState,
     isPopupVisible,
     setPopupVisibility,
-    togglePopup
+    togglePopup,
+    inputSearch,
+    setInputSearch,
+    updateInputSearch, 
+    setUpdateInputSearch,
+    fetchData,
   ] = useInvoiceApp();
 
   /*
   * USE EFFECT
   */
   React.useEffect(() => {
-    console.log(uriRetrieveCards);
+    console.log("use effect");
+    fetchData();
     getInvoiceData();
   }, []);
 
@@ -500,19 +507,32 @@ function useInvoiceApp(props) {
   const [loadPanelVisible, setLoadPanelVisible] = React.useState(true);
   const [invoiceData, setInvoiceData] = React.useState();
   const [isLoading, setIsLoading] = React.useState(true);
-  const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + "/o/proxy-service-hub/retrieveCardsByParamGet?p_auth=" + Liferay.authToken);
+  const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + Constants.retriveCardsPOST + "?p_auth=" + Liferay.authToken);
+  const [uriRetrieveCardsGET, setUriRetrieveCardsGET] = React.useState(themeDisplay.getPortalURL() + Constants.retrieveCardsGET + "?p_auth=" + Liferay.authToken);
   const [isPopupVisible, setPopupVisibility] = React.useState(false);
   const [inputSearch, setInputSearch] = React.useState(inputSearchObj);
-
+  const [updateInputSearch, setUpdateInputSearch] = React.useState(true);
 
   const getInvoiceData = async () => {
-    console.log("async call")
-    axios.get(uriRetrieveCards).then(res => {
+    console.log("async call " + uriRetrieveCardsGET)
+    axios.get(uriRetrieveCardsGET).then(res => {
       setInvoiceData(res.data);
       console.log(res);
       setIsLoading(false);
       setLoadPanelVisible(false)
     });
+  };
+
+  const fetchData = async () => {
+    try {
+      const dataPosts = await axios.post(uriRetrieveCards,
+        inputSearch
+      );
+      console.log("result post");
+      console.log(dataPosts.data);
+    } catch (err) {
+      console.error("err ------> " + err.message);
+    }
   };
 
   const togglePopup = () => {
@@ -554,6 +574,11 @@ function useInvoiceApp(props) {
       "FieldValue": "'DA LAVORARE'"
     });
     console.log(inputSearch);
+    const updated = inputSearch;
+    console.log("updated");
+    console.log(updated);
+    setInputSearch(updated);
+    // setUpdateInputSearch(!updateInputSearch);
   }
 
   const handleChangeInvoiceType = (e) => {
@@ -630,6 +655,11 @@ function useInvoiceApp(props) {
     handleValueChangedInvoiceState,
     isPopupVisible,
     setPopupVisibility,
-    togglePopup
+    togglePopup,
+    inputSearch,
+    setInputSearch,
+    updateInputSearch, 
+    setUpdateInputSearch,
+    fetchData
   ]
 }
