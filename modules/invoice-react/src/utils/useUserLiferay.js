@@ -2,16 +2,16 @@ import React from "react";
 
 export function useUserLiferay() {
 
-  const [loggedUser, setLoggedUser] = React.useState({});
-  const [userId, setUserId] = React.useState();
+  const [userId, setUserId] = React.useState("");
   const [userAuthToken, setUserAuthToken] = React.useState("");
-  console.log(Liferay.authToken);
 
   React.useEffect(() => {
+    console.log("eoraaaaa " + Liferay.authToken);
     setUserAuthToken(Liferay.authToken);
-  }, [Liferay.authToken]);
+    setUserId(window.themeDisplay.getUserId());
+  }, []);
 
-  return { userAuthToken };
+  return userAuthToken;
 }
 
 const getloggedUser = (companyId, setUserId, setUserAuthToken) => {

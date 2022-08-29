@@ -10,15 +10,13 @@ import {
   Paging,
   Export,
   FilterRow,
-  FilterPanel,
   Selection,
   HeaderFilter,
   Toolbar,
   Button,
   Item
 } from 'devextreme-react/data-grid';
-import { LoadPanel } from 'devextreme-react/load-panel';
-import { Popup, ToolbarItem } from 'devextreme-react/popup';
+import { Popup } from 'devextreme-react/popup';
 import TreeView from 'devextreme-react/tree-view';
 import DateBox from 'devextreme-react/date-box';
 import DropDownBox from 'devextreme-react/drop-down-box';
@@ -29,9 +27,10 @@ import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
 import { jsPDF } from 'jspdf';
 import InvoiceDetailPopup from './InvoiceDetailPopup';
 import axios from "axios";
-import Loading from "./Loading";
 import { inputSearchObj } from "../data/inputSearchObj";
 import * as Constants from "../utils/constants";
+import { ThreeDots } from 'react-loader-spinner'
+import { Toast } from 'devextreme-react/toast';
 
 const exportFormats = ['pdf'];
 const optionsInvoiceState = [{
@@ -119,10 +118,14 @@ export default function InvoiceApp() {
     setPopupVisibility,
     togglePopup,
     inputSearch,
-    setInputSearch,
-    updateInputSearch, 
+    // setInputSearch,
+    updateInputSearch,
     setUpdateInputSearch,
     fetchData,
+    toastUnauthorizeIsVisible, 
+    setToastUnauthorizeIsVisible,
+    isLoadingSpinnerVisible, 
+    setIsLoadingSpinnerVisible
   ] = useInvoiceApp();
 
   /*
@@ -130,9 +133,14 @@ export default function InvoiceApp() {
   */
   React.useEffect(() => {
     console.log("use effect");
-    fetchData();
     getInvoiceData();
   }, []);
+
+  React.useEffect(() => {
+    console.log("use effect POST");
+    console.log(inputSearch);
+    fetchData();
+  }, [inputSearch]);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
   React.useEffect(() => {
@@ -248,25 +256,110 @@ export default function InvoiceApp() {
     );
   }
 
-  const position = { of: '#datagrid-invoice' };
-
   return (
     <div className='panel-container' id="datagrid-invoice">
-      <LoadPanel
-        shadingColor="rgba(0,0,0,0.4)"
-        position={position}
-        // onHiding={this.hideLoadPanel}
-        visible={loadPanelVisible}
-        showIndicator={true}
-        shading={false}
-        // showPane={true}
-        // hideOnOutsideClick={hideOnOutsideClick}
-        height={200}
-        width={400}
-      >
-      </LoadPanel>
-
-      {isLoading ? <div style={{ display: "none" }}></div>
+      {isLoading ?
+        <div>
+          <DataGrid
+            id="dataGrid-tmp"
+            className={'dx-card wide-card'}
+            allowColumnResizing={true}
+            columnAutoWidth={true}
+            showColumnLines={false}
+            showRowLines={true}
+            rowAlternationEnabled={true}
+          >
+            <Toolbar>
+              <Item location="before">
+                <DropDownBox
+                  width="225"
+                  value={multiValuesInvoiceState}
+                  valueExpr="ID"
+                  displayExpr="name"
+                  placeholder="Stato fattura"
+                  showClearButton={true}
+                  dataSource={optionsInvoiceState}
+                  onValueChanged={handleValueChangedInvoiceState}
+                  contentRender={treeViewRender}
+                />
+              </Item>
+              <Item location="before">
+                <SelectBox
+                  width="225"
+                  dataSource={optionsInvoiceType}
+                  displayExpr="name"
+                  keyExpr="ID"
+                  placeholder='Fattura'
+                  onValueChanged={handleChangeInvoiceType}
+                />
+              </Item>
+              <Item location="before">
+                <SelectBox
+                  width="225"
+                  dataSource={optionsInvoicePeriod}
+                  displayExpr="name"
+                  keyExpr="ID"
+                  defaultValue={"Libero"}
+                  onValueChanged={handleChangeInvoicePeriod}
+                />
+              </Item>
+              <Item
+                widget="dxButton"
+                location="after"
+                options={buttonDownloadJobOptions}
+              />
+              <Item
+                widget="dxButton"
+                location="center"
+                options={buttonForPopup}>
+              </Item>
+              <Item
+                widget="dxButton"
+                location="after"
+                options={buttonDownloadOptions}
+              />
+              <Item
+                widget="dxButton"
+                location="after"
+                options={buttonSyncOptions}
+              />
+              <Item
+                widget="dxButton"
+                location="after"
+                options={buttonMoreOptions}
+              />
+            </Toolbar>
+            <HeaderFilter
+              allowSearch={true}
+              visible={true}
+            />
+          </DataGrid>
+          <ThreeDots
+            height="50"
+            width="50"
+            radius="9"
+            color="#009fe3"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={{
+              position: "absolute",
+              width: "300px",
+              top: "50%",
+              justifyContent: "center",
+              left: "calc(50% - 150px)",
+              background: "white",
+              height: "50px"
+            }}
+            wrapperClassName=""
+            visible={isLoadingSpinnerVisible}
+          />
+          <Toast
+            visible={toastUnauthorizeIsVisible}
+            message="Mancata autenticazione.. Effettua il login per usufruire del servizio"
+            type="error"
+            onHiding={() => setToastUnauthorizeIsVisible(false)}
+            displayTime={6000}
+          />
+        </div>
         :
         <DataGrid
           ref={dataGridRef}
@@ -277,7 +370,6 @@ export default function InvoiceApp() {
           allowColumnReordering={true}
           allowColumnResizing={true}
           columnAutoWidth={true}
-          showBorders={true}
           showColumnLines={false}
           showRowLines={true}
           rowAlternationEnabled={true}
@@ -510,8 +602,10 @@ function useInvoiceApp(props) {
   const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + Constants.retriveCardsPOST + "?p_auth=" + Liferay.authToken);
   const [uriRetrieveCardsGET, setUriRetrieveCardsGET] = React.useState(themeDisplay.getPortalURL() + Constants.retrieveCardsGET + "?p_auth=" + Liferay.authToken);
   const [isPopupVisible, setPopupVisibility] = React.useState(false);
-  const [inputSearch, setInputSearch] = React.useState(inputSearchObj);
+  let inputSearch = inputSearchObj;
   const [updateInputSearch, setUpdateInputSearch] = React.useState(true);
+  const [toastUnauthorizeIsVisible, setToastUnauthorizeIsVisible] = React.useState(false);
+  const [isLoadingSpinnerVisible, setIsLoadingSpinnerVisible] = React.useState(true);
 
   const getInvoiceData = async () => {
     console.log("async call " + uriRetrieveCardsGET)
@@ -520,7 +614,13 @@ function useInvoiceApp(props) {
       console.log(res);
       setIsLoading(false);
       setLoadPanelVisible(false)
-    });
+    }).catch(err => {
+      // Handle error unauthorize
+      if (err.message.indexOf("403") !== -1) {
+        setIsLoadingSpinnerVisible(false);
+        setToastUnauthorizeIsVisible(true);
+      }
+    });;
   };
 
   const fetchData = async () => {
@@ -531,7 +631,10 @@ function useInvoiceApp(props) {
       console.log("result post");
       console.log(dataPosts.data);
     } catch (err) {
-      console.error("err ------> " + err.message);
+      if (err.message.indexOf("403") !== -1) {
+        setIsLoadingSpinnerVisible(false);
+        setToastUnauthorizeIsVisible(true);
+      }
     }
   };
 
@@ -577,8 +680,8 @@ function useInvoiceApp(props) {
     const updated = inputSearch;
     console.log("updated");
     console.log(updated);
-    setInputSearch(updated);
-    // setUpdateInputSearch(!updateInputSearch);
+    inputSearch = updated;
+    setUpdateInputSearch(!updateInputSearch);
   }
 
   const handleChangeInvoiceType = (e) => {
@@ -657,9 +760,13 @@ function useInvoiceApp(props) {
     setPopupVisibility,
     togglePopup,
     inputSearch,
-    setInputSearch,
-    updateInputSearch, 
+    // setInputSearch,
+    updateInputSearch,
     setUpdateInputSearch,
-    fetchData
+    fetchData,
+    toastUnauthorizeIsVisible, 
+    setToastUnauthorizeIsVisible,
+    isLoadingSpinnerVisible, 
+    setIsLoadingSpinnerVisible
   ]
 }
