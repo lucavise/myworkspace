@@ -118,13 +118,13 @@ export default function InvoiceApp() {
     setPopupVisibility,
     togglePopup,
     inputSearch,
-    // setInputSearch,
+    setInputSearch,
     updateInputSearch,
     setUpdateInputSearch,
     fetchData,
-    toastUnauthorizeIsVisible, 
+    toastUnauthorizeIsVisible,
     setToastUnauthorizeIsVisible,
-    isLoadingSpinnerVisible, 
+    isLoadingSpinnerVisible,
     setIsLoadingSpinnerVisible
   ] = useInvoiceApp();
 
@@ -133,7 +133,7 @@ export default function InvoiceApp() {
   */
   React.useEffect(() => {
     console.log("use effect");
-    getInvoiceData();
+    fetchData();
   }, []);
 
   React.useEffect(() => {
@@ -602,7 +602,7 @@ function useInvoiceApp(props) {
   const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + Constants.retriveCardsPOST + "?p_auth=" + Liferay.authToken);
   const [uriRetrieveCardsGET, setUriRetrieveCardsGET] = React.useState(themeDisplay.getPortalURL() + Constants.retrieveCardsGET + "?p_auth=" + Liferay.authToken);
   const [isPopupVisible, setPopupVisibility] = React.useState(false);
-  let inputSearch = inputSearchObj;
+  const [inputSearch, setInputSearch] = React.useState(inputSearchObj);
   const [updateInputSearch, setUpdateInputSearch] = React.useState(true);
   const [toastUnauthorizeIsVisible, setToastUnauthorizeIsVisible] = React.useState(false);
   const [isLoadingSpinnerVisible, setIsLoadingSpinnerVisible] = React.useState(true);
@@ -630,6 +630,9 @@ function useInvoiceApp(props) {
       );
       console.log("result post");
       console.log(dataPosts.data);
+      setInvoiceData(dataPosts.data);
+      setIsLoading(false);
+      setLoadPanelVisible(false)
     } catch (err) {
       if (err.message.indexOf("403") !== -1) {
         setIsLoadingSpinnerVisible(false);
@@ -669,19 +672,20 @@ function useInvoiceApp(props) {
 
   const handleItemSelectionChangedInvoiceState = (e) => {
     setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
-    // console.log(e);
-    // console.log(e.component.getSelectedNodeKeys())
-    inputSearch.paramIn.SearchCriteria.Fields.push({
-      "FieldValueTo": "'DA LAVORARE'",
-      "FieldId": "21",
-      "FieldValue": "'DA LAVORARE'"
-    });
-    console.log(inputSearch);
-    const updated = inputSearch;
-    console.log("updated");
-    console.log(updated);
-    inputSearch = updated;
-    setUpdateInputSearch(!updateInputSearch);
+    const nextInputSearchFields = [
+      ...inputSearch.paramIn.SearchCriteria.Fields, {
+        FieldValueTo: "'DA LAVORARE'",
+        FieldId: "21",
+        FieldValue: "'DA LAVORARE'"
+      }
+    ]
+
+    const nextInputSearchSearchCriteria = { ...inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields};
+    const nextInputSearchParamIn = { ...inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria};
+    const nextInputSearch = { ...inputSearch, paramIn: nextInputSearchParamIn};
+    setInputSearch({...inputSearch, paramIn: nextInputSearchParamIn});
+
+    // setUpdateInputSearch(!updateInputSearch);
   }
 
   const handleChangeInvoiceType = (e) => {
@@ -760,13 +764,13 @@ function useInvoiceApp(props) {
     setPopupVisibility,
     togglePopup,
     inputSearch,
-    // setInputSearch,
+    setInputSearch,
     updateInputSearch,
     setUpdateInputSearch,
     fetchData,
-    toastUnauthorizeIsVisible, 
+    toastUnauthorizeIsVisible,
     setToastUnauthorizeIsVisible,
-    isLoadingSpinnerVisible, 
+    isLoadingSpinnerVisible,
     setIsLoadingSpinnerVisible
   ]
 }

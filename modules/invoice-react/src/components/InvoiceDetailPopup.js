@@ -104,7 +104,7 @@ export default function InvoiceDetailPopup(props) {
         </div>
         <div className='item-of-invoice'>
           <h5>Identificativo SDI</h5>
-          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[24].value}</h4>
+          <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[23].value}</h4>
         </div>
       </div>
     </Popup>
