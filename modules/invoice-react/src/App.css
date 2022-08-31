@@ -118,3 +118,10 @@ h4.metadata-field {
 .dx-datagrid-header-panel .dx-toolbar .dx-toolbar-items-container {
   height: 100%;
 }
+
+.dx-datagrid-filter-row .dx-editor-with-menu .dx-placeholder::before, 
+.dx-datagrid-filter-row .dx-editor-cell .dx-editor-with-menu .dx-texteditor-input,
+.dx-datagrid-filter-row .dx-editor-cell .dx-texteditor, 
+.dx-datagrid-filter-row .dx-editor-cell .dx-texteditor .dx-texteditor-input {
+  background-color: transparent !important;
+}

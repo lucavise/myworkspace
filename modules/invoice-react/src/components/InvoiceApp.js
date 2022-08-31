@@ -14,7 +14,8 @@ import {
   HeaderFilter,
   Toolbar,
   Button,
-  Item
+  Item,
+  RemoteOperations
 } from 'devextreme-react/data-grid';
 import { Popup } from 'devextreme-react/popup';
 import TreeView from 'devextreme-react/tree-view';
@@ -31,6 +32,7 @@ import { inputSearchObj } from "../data/inputSearchObj";
 import * as Constants from "../utils/constants";
 import { ThreeDots } from 'react-loader-spinner'
 import { Toast } from 'devextreme-react/toast';
+import CustomStore from "devextreme/data/custom_store";
 
 const exportFormats = ['pdf'];
 const optionsInvoiceState = [{
@@ -97,8 +99,6 @@ export default function InvoiceApp() {
     setAllDataInGrid,
     indexPopupRowData,
     setIndexPopupRowData,
-    loadPanelVisible,
-    setLoadPanelVisible,
     invoiceData,
     setInvoiceData,
     isLoading,
@@ -128,19 +128,79 @@ export default function InvoiceApp() {
     setIsLoadingSpinnerVisible
   ] = useInvoiceApp();
 
+  const isNotEmpty = (value) => value !== undefined && value !== null && value !== '';
+
+  console.log(inputSearch);
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(inputSearch)
+  };
+
+  const customStore = new CustomStore({
+    key: 'prog',
+    load: async (loadOptions) => {
+      let params = '?';
+
+      [
+        'filter',
+        'group',
+        'groupSummary',
+        'parentIds',
+        'requireGroupCount',
+        'requireTotalCount',
+        'searchExpr',
+        'searchOperation',
+        'searchValue',
+        'select',
+        'sort',
+        'skip',
+        'take',
+        'totalSummary',
+        'userData'
+      ].forEach(function (i) {
+        if (i in loadOptions && isNotEmpty(loadOptions[i])) {
+          params += `${i}=${JSON.stringify(loadOptions[i])}&`;
+        }
+      });
+      params = params.slice(0, -1);
+      console.log("requestoption");
+      console.log(requestOptions);
+      try {
+        const response = await fetch(uriRetrieveCards, requestOptions);
+        const response_1 = await response.json();
+        console.log("response_1");
+        console.log(response_1);
+        return {
+          data: response_1.cards,
+          totalCount: response_1.hitsCount
+        };
+      } catch {
+        throw 'Network error';
+      }
+    }
+  });
+
   /*
   * USE EFFECT
-  */
+  
   React.useEffect(() => {
     console.log("use effect");
     fetchData();
   }, []);
+  */
 
   React.useEffect(() => {
     console.log("use effect POST");
     console.log(inputSearch);
-    fetchData();
+    // fetchData();
+    const resp = customStore.load();
+    resp.then((res) => {
+      setIsLoading(false);
+      setIsLoadingSpinnerVisible(false);
+    })
   }, [inputSearch]);
+
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
   React.useEffect(() => {
@@ -150,6 +210,7 @@ export default function InvoiceApp() {
   /*
   *
   */
+
 
   // EXPORT
   const dataGridRef = React.useRef(null);
@@ -267,6 +328,7 @@ export default function InvoiceApp() {
             columnAutoWidth={true}
             showColumnLines={false}
             showRowLines={true}
+            loadPanel={false}
             rowAlternationEnabled={true}
           >
             <Toolbar>
@@ -364,7 +426,8 @@ export default function InvoiceApp() {
         <DataGrid
           ref={dataGridRef}
           id="dataGrid"
-          dataSource={invoiceData.cards}
+          // dataSource={invoiceData.cards}
+          dataSource={customStore}
           keyExpr="prog"
           className={'dx-card wide-card'}
           allowColumnReordering={true}
@@ -375,7 +438,11 @@ export default function InvoiceApp() {
           rowAlternationEnabled={true}
           onRowDblClick={handleRowDblClick}
           onContentReady={handleContentReadyOfDataGrid}
+          loadPanel={false}
+        // filterBuilder={filterBuilder}
+        // defaultFilterValue={filterValue}
         >
+          <RemoteOperations paging={true} groupPaging={true}></RemoteOperations>
           <Selection mode="multiple" selectAllMode={true} deferred={true} />
           <Paging defaultPageSize={10} />
           <Pager
@@ -458,101 +525,127 @@ export default function InvoiceApp() {
           <Column
             caption={'Progressivo'}
             dataField={'prog'}
+            allowFiltering={false}
           />
           <Column
             caption={'Etichette'}
             dataField={'additives[0].AdditiveValue'}
+            allowFiltering={false}
           />
           <Column
             caption={'Data inserimento'}
             dataField={'fieldTypes[1].value'}
+            defaultSelectedFilterOperation=">="
+            dataType="date"
           />
           <Column
             caption={'In carico a'}
             dataField={'fieldTypes[2].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Data trasmissione'}
+            defaultSelectedFilterOperation=">="
+            dataType="date"
           />
           <Column
             caption={'Numero Fattura'}
             dataField={'fieldTypes[4].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Data Fattura'}
             dataField={'fieldTypes[5].value'}
+            allowFiltering={false}
           />
           <Column
             caption={'P. IVA FORNITORE'}
             dataField={'fieldTypes[6].value'}
+            allowFiltering={false}
           />
           <Column
             caption={'CF FORNITORE'}
             dataField={'fieldTypes[7].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'RAG. SOC. FORNITORE'}
             dataField={'fieldTypes[8].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'P.IVA CLIENTE'}
             dataField={'fieldTypes[9].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'CF CLIENTE'}
             dataField={'fieldTypes[10].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'RAG. SOC. CLIENTE'}
             dataField={'fieldTypes[11].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'P. IVA CLIENTE'}
             dataField={'fieldTypes[12].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Data prima scadenza'}
             dataField={'fieldTypes[14].value'}
+            defaultSelectedFilterOperation=">="
           />
           <Column
             caption={'TOTALE FATTURA'}
             dataField={'fieldTypes[15].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Codice valuta'}
             dataField={'fieldTypes[16].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Tipo documento'}
             dataField={'fieldTypes[17].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Formato trasmissione'}
-
+            allowFiltering={false}
           />
           <Column
             caption={'Canale principale'}
             dataField={'fieldTypes[19].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Fase fattura'}
             dataField={'fieldTypes[20].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Stato fattura'}
             dataField={'fieldTypes[21].value'}
+            allowFiltering={false}
           />
           <Column
             caption={'Stato conservazione'}
             dataField={'fieldTypes[22].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Progressivo invio'}
             dataField={'fieldTypes[23].value'}
+            defaultSelectedFilterOperation="="
           />
           <Column
             caption={'Identificativo SDI'}
             dataField={'fieldTypes[24].value'}
+            defaultSelectedFilterOperation="="
           />
 
         </DataGrid>
@@ -596,7 +689,6 @@ function useInvoiceApp(props) {
   const [popupRowData, setPopupRowData] = React.useState();
   const [allDataInGrid, setAllDataInGrid] = React.useState([]);
   const [indexPopupRowData, setIndexPopupRowData] = React.useState(0);
-  const [loadPanelVisible, setLoadPanelVisible] = React.useState(true);
   const [invoiceData, setInvoiceData] = React.useState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + Constants.retriveCardsPOST + "?p_auth=" + Liferay.authToken);
@@ -613,7 +705,6 @@ function useInvoiceApp(props) {
       setInvoiceData(res.data);
       console.log(res);
       setIsLoading(false);
-      setLoadPanelVisible(false)
     }).catch(err => {
       // Handle error unauthorize
       if (err.message.indexOf("403") !== -1) {
@@ -632,7 +723,6 @@ function useInvoiceApp(props) {
       console.log(dataPosts.data);
       setInvoiceData(dataPosts.data);
       setIsLoading(false);
-      setLoadPanelVisible(false)
     } catch (err) {
       if (err.message.indexOf("403") !== -1) {
         setIsLoadingSpinnerVisible(false);
@@ -680,10 +770,10 @@ function useInvoiceApp(props) {
       }
     ]
 
-    const nextInputSearchSearchCriteria = { ...inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields};
-    const nextInputSearchParamIn = { ...inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria};
-    const nextInputSearch = { ...inputSearch, paramIn: nextInputSearchParamIn};
-    setInputSearch({...inputSearch, paramIn: nextInputSearchParamIn});
+    const nextInputSearchSearchCriteria = { ...inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
+    const nextInputSearchParamIn = { ...inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
+    const nextInputSearch = { ...inputSearch, paramIn: nextInputSearchParamIn };
+    setInputSearch({ ...inputSearch, paramIn: nextInputSearchParamIn });
 
     // setUpdateInputSearch(!updateInputSearch);
   }
@@ -743,8 +833,6 @@ function useInvoiceApp(props) {
     setAllDataInGrid,
     indexPopupRowData,
     setIndexPopupRowData,
-    loadPanelVisible,
-    setLoadPanelVisible,
     invoiceData,
     setInvoiceData,
     isLoading,
@@ -774,3 +862,22 @@ function useInvoiceApp(props) {
     setIsLoadingSpinnerVisible
   ]
 }
+
+const filterBuilder = {
+  /*
+  customOperations: [{
+    name: 'weekends',
+    caption: 'Weekends',
+    dataTypes: ['date'],
+    icon: 'check',
+    hasValue: false,
+    calculateFilterExpression: () => [[getOrderDay, '=', 0], 'or', [getOrderDay, '=', 6]],
+  }],
+  allowHierarchicalFields: true,
+*/
+};
+
+const filterValue = [
+  /*['Employee', '=', 'Clark Morgan'], 'and', ['OrderDate', 'weekends']
+*/
+];
