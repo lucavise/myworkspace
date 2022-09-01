@@ -12,11 +12,6 @@
   border-radius: 0;
 }
 
-.invoice-react .dx-show-clear-button .dx-icon-clear::before {
-  margin-top: -8.5px;
-  margin-left: -8.5px;
-}
-
 .panel-container {
   width: 100%;
   padding: 10px;
@@ -90,10 +85,6 @@ h4.metadata-field {
   white-space: normal;
 }
 
-.dx-popup-normal .dx-closebutton {
-  border-color: white;
-}
-
 .header-invoice-detail {
   height: 40px;
   display: flex;
@@ -124,4 +115,16 @@ h4.metadata-field {
 .dx-datagrid-filter-row .dx-editor-cell .dx-texteditor, 
 .dx-datagrid-filter-row .dx-editor-cell .dx-texteditor .dx-texteditor-input {
   background-color: transparent !important;
+}
+
+.dx-datagrid-headers {
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+.attachments-announcements {
+  margin-top: 50px;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  row-gap: 30px;
 }

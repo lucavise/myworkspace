@@ -40,6 +40,7 @@ export default function InvoiceDetailPopup(props) {
         </div>
         <Button text={"SCARICA"} name="download" hint="Scarica" icon="fdx-icon fas fa-caret-down" />
         <Button text={"INVIA"} name="send" hint="Invia" icon="dx-icon fas fa-envelope" />
+        <Button text={"MODIFICA"} name="send" hint="Modifica" icon="dx-icon fas fa-edit" />
       </div>
       <div className='row-data-container invoice-detail'>
         <div className='item-of-invoice'>
@@ -106,6 +107,10 @@ export default function InvoiceDetailPopup(props) {
           <h5>Identificativo SDI</h5>
           <h4 className='textColorDefault metadata-field'>{popupRowData !== undefined && popupRowData.fieldTypes[23].value}</h4>
         </div>
+      </div>
+      <div className="attachments-announcements">
+        <h4>Elenco Ricevute e Comunicazioni SDI</h4>
+        <h4>Allegati</h4>
       </div>
     </Popup>
   );
