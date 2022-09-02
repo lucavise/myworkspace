@@ -97,26 +97,29 @@ export default function DataGridStore(props) {
     invoicePeriod,
     setInvoicePeriod,
     handlePageIndexChange,
-    handlePageSizeChange
+    handlePageSizeChange,
+    isAttachmentsIconVisible,
+    isCommentsIconVisible
   ] = useDataGridStore(props);
 
-    // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
-    React.useEffect(() => {
-      setPopupRowData(allDataInGrid[indexPopupRowData]);
-    }, [indexPopupRowData]);
-  
-    // EXPORT
-    const dataGridRef = React.useRef(null);
-    function exportGrid() {
-      const doc = new jsPDF();
-      const dataGrid = dataGridRef.current.instance;
-      exportDataGridToPdf({
-        jsPDFDocument: doc,
-        component: dataGrid
-      }).then(() => {
-        doc.save('Customers.pdf');
-      });
-    }
+  // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
+  React.useEffect(() => {
+    setPopupRowData(allDataInGrid[indexPopupRowData]);
+  }, [indexPopupRowData]);
+
+  // EXPORT
+  const dataGridRef = React.useRef(null);
+  function exportGrid() {
+    const doc = new jsPDF();
+    const dataGrid = dataGridRef.current.instance;
+    exportDataGridToPdf({
+      jsPDFDocument: doc,
+      component: dataGrid
+    }).then(() => {
+      doc.save('Customers.pdf');
+    });
+  }
+
   // BOTTONI
   const buttonDownloadJobOptions = {
     hint: 'Abilita salvataggi automatici',
@@ -232,10 +235,10 @@ export default function DataGridStore(props) {
       >
         <RemoteOperations paging={true} groupPaging={true}></RemoteOperations>
         <Selection mode="multiple" selectAllMode={true} deferred={true} />
-        <Paging 
-          defaultPageSize={10} 
-          onPageIndexChange={handlePageIndexChange} 
-          onPageSizeChange={handlePageSizeChange}/>
+        <Paging
+          defaultPageSize={10}
+          onPageIndexChange={handlePageIndexChange}
+          onPageSizeChange={handlePageSizeChange} />
         <Pager
           visible={true}
           showPageSizeSelector={true}
@@ -308,10 +311,20 @@ export default function DataGridStore(props) {
           allowSearch={true}
           visible={true}
         />
-        <Column type="buttons" width={150}>
+        <Column type="buttons" width={40}>
           <Button name="open" hint="Dettaglio" icon="fas fa-search-plus" onClick={handleViewDetailClick} />
+        </Column>
+        <Column type="buttons" width={40}>
           <Button name="view-signature-doc" hint="Visualizza documento principale in una nuova scheda [Firmato]" icon="fas fa-file-signature" />
+        </Column>
+        <Column type="buttons" width={40}>
           <Button name="" hint="Ricevute e comunicazioni SDI" icon="fas fa-stream" />
+        </Column>
+        <Column type="buttons" width={40}>
+          <Button name="attachments" hint="allegati presenti" icon="fas fa-paperclip" visible={isAttachmentsIconVisible}></Button>
+        </Column>
+        <Column type="buttons" width={40}>
+          <Button name="notes" hint="note presenti" icon="fas fa-comments" visible={isCommentsIconVisible}></Button>
         </Column>
 
         <Column
@@ -530,12 +543,21 @@ function useDataGridStore(props) {
   };
   */
 
+  const isAttachmentsIconVisible = (e) => {
+    return e.row.cells[e.row.rowIndex].data.hasAttachments;
+  }
+
+  const isCommentsIconVisible = (e) => {
+    return e.row.cells[e.row.rowIndex].data.hasNotes;
+  }
+
   const togglePopup = () => {
     setPopupVisibility(!isPopupVisible);
   };
 
   // cambio di stato nella multiselection dello stato fattura
   const handleValueChangedInvoiceState = (e) => {
+    console.log("change invoice state");
     const treeView = (e.component.selectItem && e.component)
       || (treeViewMine && treeViewMine.instance);
 
@@ -551,6 +573,7 @@ function useDataGridStore(props) {
     }
 
     if (e.value !== undefined) {
+      console.log(e);
       setMultiValuesInvoiceState(e.value);
     }
   }
@@ -609,7 +632,7 @@ function useDataGridStore(props) {
   const handleContentReadyOfDataGrid = (e) => {
     // ad ogni refresh dei dati si refresha anche la griglia. Quando tutti i dati sono in griglia
     // me li prendo e li metto in uno stato. Mi servono per scorrerli dentro al popup in modalità slider
-    console.log(e.component.getDataSource());
+    // console.log(e.component.getDataSource());
     setAllDataInGrid(e.component.getDataSource()._items);
   }
 
@@ -654,6 +677,8 @@ function useDataGridStore(props) {
     invoicePeriod,
     setInvoicePeriod,
     handlePageIndexChange,
-    handlePageSizeChange
+    handlePageSizeChange,
+    isAttachmentsIconVisible,
+    isCommentsIconVisible
   ]
 }

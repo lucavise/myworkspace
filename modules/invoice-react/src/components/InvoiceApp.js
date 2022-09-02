@@ -59,8 +59,6 @@ export default function InvoiceApp() {
         }
       });
       params = params.slice(0, -1);
-      console.log("requestoption");
-      console.log(requestOptions);
       try {
         const response = await fetch(uriRetrieveCards, requestOptions);
         const response_1 = await response.json();
@@ -88,6 +86,7 @@ export default function InvoiceApp() {
     console.log("use effect");
     fetchData();
   }, []);
+  
   */
 
 
