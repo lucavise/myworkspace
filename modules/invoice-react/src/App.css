@@ -126,5 +126,5 @@ h4.metadata-field {
   display: flex;
   width: 100%;
   flex-direction: column;
-  row-gap: 30px;
+  row-gap: 10px;
 }

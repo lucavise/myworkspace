@@ -25,7 +25,6 @@ import { invoicesFromWS } from '../data/invoicesFromWS';
 import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
 import { jsPDF } from 'jspdf';
 import InvoiceDetailPopup from './InvoiceDetailPopup';
-import axios from "axios";
 import { ThreeDots } from 'react-loader-spinner'
 
 const exportFormats = ['pdf'];
