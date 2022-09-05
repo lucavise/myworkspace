@@ -98,7 +98,8 @@ export default function DataGridStore(props) {
     handlePageIndexChange,
     handlePageSizeChange,
     isAttachmentsIconVisible,
-    isCommentsIconVisible
+    isCommentsIconVisible,
+    refreshDatagrid
   ] = useDataGridStore(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -229,6 +230,7 @@ export default function DataGridStore(props) {
         onRowDblClick={handleRowDblClick}
         onContentReady={handleContentReadyOfDataGrid}
         loadPanel={false}
+        cacheEnabled={true}
       // filterBuilder={filterBuilder}
       // defaultFilterValue={filterValue}
       >
@@ -299,6 +301,7 @@ export default function DataGridStore(props) {
             widget="dxButton"
             location="after"
             options={buttonSyncOptions}
+            onClick={refreshDatagrid}
           />
           <Item
             widget="dxButton"
@@ -542,6 +545,10 @@ function useDataGridStore(props) {
   };
   */
 
+  const refreshDatagrid = () => {
+    props.customStore.load();
+  }
+
   const isAttachmentsIconVisible = (e) => {
     return e.row.cells[e.row.rowIndex].data.hasAttachments;
   }
@@ -678,6 +685,7 @@ function useDataGridStore(props) {
     handlePageIndexChange,
     handlePageSizeChange,
     isAttachmentsIconVisible,
-    isCommentsIconVisible
+    isCommentsIconVisible,
+    refreshDatagrid
   ]
 }

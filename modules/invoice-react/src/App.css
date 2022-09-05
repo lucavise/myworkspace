@@ -51,7 +51,7 @@
   grid-template-columns: 24% 24% 24% 24%;
   align-items: center;
   justify-content: space-between;
-  row-gap: 30px;
+  row-gap: 10px;
 }
 
 .dx-datagrid-header-panel .dx-widget.dx-button.dx-button-mode-contained.dx-button-normal.dx-button-has-text {

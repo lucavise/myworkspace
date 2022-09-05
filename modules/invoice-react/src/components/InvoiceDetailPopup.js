@@ -127,19 +127,17 @@ export default function InvoiceDetailPopup(props) {
           <div className="annotations-section">
             <h4>Annotazioni</h4>
             {
-              isAnnotationsLoading && allDataInGrid[indexPopupRowData].hasNotes && <div>Sto caricando le note</div>
-            }
-            {
-              !isAnnotationsLoading && <DataGridAnnotations list={annotations}></DataGridAnnotations>
+              !allDataInGrid[indexPopupRowData].hasNotes ? <div>Non ci sono note</div> : 
+              isAnnotationsLoading && allDataInGrid[indexPopupRowData].hasNotes && <div>Sto caricando le note..</div> ||
+              !isAnnotationsLoading &&  allDataInGrid[indexPopupRowData].hasNotes && <DataGridAnnotations list={annotations}></DataGridAnnotations>
             }
           </div>
           <div className="attachments-section">
             <h4>Allegati</h4>
             {
-              isAttachmentsLoading && allDataInGrid[indexPopupRowData].hasAttachments && <div>Sto caricando gli allegati</div>
-            }
-            {
-              !isAttachmentsLoading && <DataGridAttachments list={attachments}></DataGridAttachments>
+              !allDataInGrid[indexPopupRowData].hasAttachments ? <div>Non ci sono allegati</div> : 
+              isAttachmentsLoading && allDataInGrid[indexPopupRowData].hasAttachments && <div>Sto caricando gli allegati..</div> ||
+              !isAttachmentsLoading &&  allDataInGrid[indexPopupRowData].hasAttachments && <DataGridAttachments list={attachments}></DataGridAttachments>
             }
           </div>
         </div>
@@ -178,7 +176,7 @@ function useInvoiceDetailPopup(props) {
     try {
       const uri = themeDisplay.getPortalURL() + Constants.fetchAnnotations + cardId + "/a" + "?p_auth=" + Liferay.authToken
       const listannotations = await axios.get(uri);
-      console.log("result post attachments");
+      console.log("result post annotations");
       console.log(listannotations.data);
       setAnnotations(listannotations.data);
       setIsAnnotationsLoading(false);
