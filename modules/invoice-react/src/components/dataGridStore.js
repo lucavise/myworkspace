@@ -546,6 +546,7 @@ function useDataGridStore(props) {
   */
 
   const refreshDatagrid = () => {
+    console.log("refresh grid");
     props.customStore.load();
   }
 
