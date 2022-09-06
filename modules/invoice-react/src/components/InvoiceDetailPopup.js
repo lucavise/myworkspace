@@ -171,6 +171,21 @@ function useInvoiceDetailPopup(props) {
     }
   };
 
+  const fetchAttachmentFile = async (cardId) => {
+    try {
+      const uri = themeDisplay.getPortalURL() + Constants.fetchAttachments + cardId + "/a" + "?p_auth=" + Liferay.authToken
+      const listattachments = await axios.get(uri);
+      console.log("result post attachments");
+      console.log(listattachments.data);
+      setAttachments(listattachments.data);
+      setIsAttachmentsLoading(false);
+    } catch (err) {
+      if (err.message.indexOf("403") !== -1) {
+
+      }
+    }
+  };
+
 
   const fetchAnnotations = async (cardId) => {
     try {

@@ -26,6 +26,7 @@ import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
 import { jsPDF } from 'jspdf';
 import InvoiceDetailPopup from './InvoiceDetailPopup';
 import { ThreeDots } from 'react-loader-spinner'
+import { inputSearchObj } from "../data/inputSearchObj";
 
 const exportFormats = ['pdf'];
 const allowedPageSizes = [10, 20, 50, 100];
@@ -98,8 +99,7 @@ export default function DataGridStore(props) {
     handlePageIndexChange,
     handlePageSizeChange,
     isAttachmentsIconVisible,
-    isCommentsIconVisible,
-    refreshDatagrid
+    isCommentsIconVisible
   ] = useDataGridStore(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -212,12 +212,19 @@ export default function DataGridStore(props) {
     );
   }
 
+  const refreshDatagrid = () => {
+    console.log(dataGridRef);
+    props.setInputSearch({ ...props.inputSearch, ...inputSearchObj});
+    dataGridRef.current.instance.state(null);
+    // dataGridRef.current.instance.getDataSource().reload();
+    const input = props.inputSearch;
+  }
+
   return (
     <>
       <DataGrid
         ref={dataGridRef}
         id="dataGrid"
-        // dataSource={invoiceData.cards}
         dataSource={props.customStore}
         keyExpr="prog"
         className={'dx-card wide-card'}
@@ -230,9 +237,6 @@ export default function DataGridStore(props) {
         onRowDblClick={handleRowDblClick}
         onContentReady={handleContentReadyOfDataGrid}
         loadPanel={false}
-        cacheEnabled={true}
-      // filterBuilder={filterBuilder}
-      // defaultFilterValue={filterValue}
       >
         <RemoteOperations paging={true} groupPaging={true}></RemoteOperations>
         <Selection mode="multiple" selectAllMode={true} deferred={true} />
@@ -545,11 +549,6 @@ function useDataGridStore(props) {
   };
   */
 
-  const refreshDatagrid = () => {
-    console.log("refresh grid load");
-    props.customStore.load();
-  }
-
   const isAttachmentsIconVisible = (e) => {
     return e.row.cells[e.row.rowIndex].data.hasAttachments;
   }
@@ -686,7 +685,6 @@ function useDataGridStore(props) {
     handlePageIndexChange,
     handlePageSizeChange,
     isAttachmentsIconVisible,
-    isCommentsIconVisible,
-    refreshDatagrid
+    isCommentsIconVisible
   ]
 }

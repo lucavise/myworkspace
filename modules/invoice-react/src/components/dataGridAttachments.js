@@ -1,4 +1,6 @@
 import React from "react";
+import * as Constants from "../utils/constants";
+import axios from "axios";
 
 import {
   DataGrid,
@@ -6,8 +8,11 @@ import {
 } from 'devextreme-react/data-grid';
 
 export default function DataGridAttachments(props) {
-  return (
+  const [
+    handleRowDblClick
+  ] = useDataGridAttachments(props);
 
+  return (
     <DataGrid
       id="dataGridAttachments"
       dataSource={props.list}
@@ -19,7 +24,7 @@ export default function DataGridAttachments(props) {
       showColumnLines={false}
       showRowLines={true}
       rowAlternationEnabled={true}
-      // onRowDblClick={handleRowDblClick}
+      onRowDblClick={handleRowDblClick}
       // onContentReady={handleContentReadyOfDataGrid}
     >
       <Column
@@ -41,4 +46,22 @@ export default function DataGridAttachments(props) {
 
 function useDataGridAttachments(props) {
 
+  const handleRowDblClick = (e) => {
+    console.log(e);
+    fetchAttachmentFile(e.data);
+  }
+
+  const fetchAttachmentFile = async (ev) => {
+    try {
+      const uri = themeDisplay.getPortalURL() + Constants.fetchAttachmentFile + ev.attachmentCardId + "/a/" + ev.code + "?p_auth=" + Liferay.authToken
+      const attachment = await axios.get(uri);
+      console.log("result get attachment file");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return [
+    handleRowDblClick
+  ];
 }
