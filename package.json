@@ -3,7 +3,8 @@
     "workspaces": {
         "packages": [
             "modules/provareact",
-            "modules/invoice-react"
+            "modules/invoice-react",
+            "modules/myts"
         ]
     }
 }

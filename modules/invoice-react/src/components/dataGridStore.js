@@ -45,11 +45,13 @@ const optionsInvoiceState = [{
 
 const optionsInvoiceType = [{
   "ID": 1,
-  "name": "B2B"
+  "name": "B2B",
+  "value": "FPR12"
 },
 {
   "ID": 2,
-  "name": "PA"
+  "name": "PA",
+  "value": "FPA12"
 }];
 
 const optionsInvoicePeriod = [{
@@ -580,6 +582,24 @@ function useDataGridStore(props) {
 
     if (e.value !== undefined) {
       console.log(e);
+      const prev = e.previousValue;
+      const val = e.value;
+      const valueTo = val.map((item) => optionsInvoiceState.map((i) => item === i.ID));
+      console.log(valueTo);
+      /*
+      const nextInputSearchFields = [
+        ...props.inputSearch.paramIn.SearchCriteria.Fields, {
+          FieldValueTo:  "'DA LAVORARE'",
+          FieldId: "21",
+          FieldValue: "'DA LAVORARE'"
+        }
+      ]
+  
+      const nextInputSearchSearchCriteria = { ...props.inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
+      const nextInputSearchParamIn = { ...props.inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
+      props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
+      props.setIsLoadingSpinnerVisible(true);
+      */
       setMultiValuesInvoiceState(e.value);
     }
   }
@@ -589,19 +609,10 @@ function useDataGridStore(props) {
   }
 
   const handleItemSelectionChangedInvoiceState = (e) => {
+    // console.log(e);
+    const isPresent = multiValuesInvoiceState.filter((item) => item !== undefined && item === e.itemData.ID)
     setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
-    const nextInputSearchFields = [
-      ...props.inputSearch.paramIn.SearchCriteria.Fields, {
-        FieldValueTo: "'DA LAVORARE'",
-        FieldId: "21",
-        FieldValue: "'DA LAVORARE'"
-      }
-    ]
-
-    const nextInputSearchSearchCriteria = { ...props.inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
-    const nextInputSearchParamIn = { ...props.inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
-    props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
-    props.setIsLoadingSpinnerVisible(true);
+    //console.log(isPresent);
   }
 
   const handlePageIndexChange = (e) => {
@@ -623,6 +634,18 @@ function useDataGridStore(props) {
   }
 
   const handleChangeInvoiceType = (e) => {
+    const nextInputSearchFields = [
+      ...props.inputSearch.paramIn.SearchCriteria.Fields, {
+        FieldValueTo: e.value.value,
+        FieldId: "18",
+        FieldValue: e.value.value
+      }
+    ]
+
+    const nextInputSearchSearchCriteria = { ...props.inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
+    const nextInputSearchParamIn = { ...props.inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
+    props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
+    props.setIsLoadingSpinnerVisible(true);
     setInvoiceType(e.value);
   }
 

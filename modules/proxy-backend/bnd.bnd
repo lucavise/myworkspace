@@ -1,7 +1,0 @@
-Bundle-Name: proxy-backend
-Bundle-SymbolicName: it.infocamere.intranet.proxybackend
-Bundle-Version: 1.0.0
-Import-Package: \
-    !org.apache.avalon.*,\
-    !org.apache.log.*,\
-	*
