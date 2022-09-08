@@ -1,0 +1,18 @@
+{
+  "packages": {
+    "/": {
+      "dest": {
+        "dir": "./build.liferay/jar",
+        "id": "/",
+        "name": "provareact",
+        "version": "0.1.0"
+      },
+      "src": {
+        "dir": ".",
+        "id": "/",
+        "name": "provareact",
+        "version": "0.1.0"
+      }
+    }
+  }
+}
