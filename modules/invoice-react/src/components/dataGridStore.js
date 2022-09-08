@@ -27,6 +27,7 @@ import { jsPDF } from 'jspdf';
 import InvoiceDetailPopup from './InvoiceDetailPopup';
 import { ThreeDots } from 'react-loader-spinner'
 import { inputSearchObj } from "../data/inputSearchObj";
+import { inputSearchObjCurrentMonth } from "../data/inputSearchObjCurrentMonth";
 
 const exportFormats = ['pdf'];
 const allowedPageSizes = [10, 20, 50, 100];
@@ -215,15 +216,20 @@ export default function DataGridStore(props) {
   }
 
   const refreshDatagrid = () => {
-    console.log(dataGridRef);
-    props.setInputSearch({ ...props.inputSearch, ...inputSearchObj});
+    // console.log(dataGridRef);
     dataGridRef.current.instance.state(null);
-    // dataGridRef.current.instance.getDataSource().reload();
-    const input = props.inputSearch;
+    props.setInputSearch({ ...props.inputSearch, ...inputSearchObj });
+    
+  }
+
+  const getCurrentMonthData = () => {
+    props.setInputSearch({ ...props.inputSearch, ...inputSearchObjCurrentMonth })
+    props.setIsLoadingSpinnerVisible(true);
   }
 
   return (
     <>
+      <div className="btn-same-tab" onClick={getCurrentMonthData}><span>MESE CORRENTE</span><i class="fas fa-star"></i></div>
       <DataGrid
         ref={dataGridRef}
         id="dataGrid"
@@ -292,27 +298,32 @@ export default function DataGridStore(props) {
             widget="dxButton"
             location="after"
             options={buttonDownloadJobOptions}
+            key={1}
           />
           <Item
             widget="dxButton"
             location="center"
-            options={buttonForPopup}>
+            options={buttonForPopup}
+            key={2}>
           </Item>
           <Item
             widget="dxButton"
             location="after"
             options={buttonDownloadOptions}
+            key={3}
           />
           <Item
             widget="dxButton"
             location="after"
             options={buttonSyncOptions}
             onClick={refreshDatagrid}
+            key={4}
           />
           <Item
             widget="dxButton"
             location="after"
             options={buttonMoreOptions}
+            key={5}
           />
         </Toolbar>
         <HeaderFilter

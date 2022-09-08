@@ -23,7 +23,6 @@ export default function InvoiceApp() {
     setToastUnauthorizeIsVisible
   ] = useInvoiceApp();
 
-  console.log(inputSearch);
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -60,6 +59,8 @@ export default function InvoiceApp() {
       });
       params = params.slice(0, -1);
       try {
+        console.log("reload -->");
+        console.log(inputSearch);
         const response = await fetch(uriRetrieveCards, requestOptions);
         const response_1 = await response.json();
         console.log("response_1");

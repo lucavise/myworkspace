@@ -17,6 +17,29 @@
   padding: 10px;
   background-color: white;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-same-tab {
+  width: 200px;
+  background: #455662;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 15px;
+  color: white;
+  position: relative;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0px 8px 15px rgb(0 0 0 / 10%);
+}
+
+.btn-same-tab .fa-star {
+  position: absolute;
+  right: 8px;
+  top: 8px;
 }
 
 .dx-row-lines {
@@ -110,9 +133,9 @@ h4.metadata-field {
   height: 100%;
 }
 
-.dx-datagrid-filter-row .dx-editor-with-menu .dx-placeholder::before, 
+.dx-datagrid-filter-row .dx-editor-with-menu .dx-placeholder::before,
 .dx-datagrid-filter-row .dx-editor-cell .dx-editor-with-menu .dx-texteditor-input,
-.dx-datagrid-filter-row .dx-editor-cell .dx-texteditor, 
+.dx-datagrid-filter-row .dx-editor-cell .dx-texteditor,
 .dx-datagrid-filter-row .dx-editor-cell .dx-texteditor .dx-texteditor-input {
   background-color: transparent !important;
 }
