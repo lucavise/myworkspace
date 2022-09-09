@@ -171,13 +171,12 @@ function useInvoiceDetailPopup(props) {
     }
   };
 
-  const fetchAttachmentFile = async (cardId) => {
+  const fetchAttachmentFile = async (cardId, attachmentCode) => {
     try {
-      const uri = themeDisplay.getPortalURL() + Constants.fetchAttachments + cardId + "/a" + "?p_auth=" + Liferay.authToken
-      const listattachments = await axios.get(uri);
-      console.log("result post attachments");
-      console.log(listattachments.data);
-      setAttachments(listattachments.data);
+      const uri = themeDisplay.getPortalURL() + Constants.fetchAttachmentFile + cardId + "/a/" + attachmentCode +"?p_auth=" + Liferay.authToken
+      const attFile = await axios.get(uri);
+      console.log("result post attachment file");
+      console.log(attFile);
       setIsAttachmentsLoading(false);
     } catch (err) {
       if (err.message.indexOf("403") !== -1) {
