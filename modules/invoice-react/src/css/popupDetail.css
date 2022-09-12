@@ -1,0 +1,57 @@
+.metadata-notes-attachments-viewer {
+	display: flex;
+	width: 100%;
+	column-gap: 10px;
+}
+
+.metadata-and-lists-section {
+	width: calc(60% - 5px);
+}
+
+.viewer-file-section {
+	width: calc(40% - 5px);
+}
+
+.viewer-file-section embed {
+	width: 100%;
+	height: 100%;
+}
+
+.arrow-slider-container {
+  display: flex;
+  width: 100%;
+  column-gap: 25px;
+  color: #009fe3;
+}
+
+.invoice-detail h5 {
+  font-size: 0.85rem;
+	color: #009fe3;
+}
+
+h4.metadata-field {
+  font-size: 0.9rem;
+  word-break: break-all;
+  white-space: normal;
+	color: #222 !important;
+}
+
+.header-invoice-detail {
+  height: 40px;
+  display: flex;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+h4.title-section {
+	font-size: 1.5rem;
+	color: #222;
+}
+
+.row-data-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 24% 24% 24% 24%;
+  justify-content: space-between;
+  row-gap: 10px;
+}

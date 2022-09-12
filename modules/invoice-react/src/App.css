@@ -68,15 +68,6 @@
   color: rgba(0, 0, 0, 0.87) !important;
 }
 
-.row-data-container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 24% 24% 24% 24%;
-  align-items: center;
-  justify-content: space-between;
-  row-gap: 10px;
-}
-
 .dx-datagrid-header-panel .dx-widget.dx-button.dx-button-mode-contained.dx-button-normal.dx-button-has-text {
   box-shadow: none;
   border-bottom: 1px dotted;
@@ -85,34 +76,10 @@
   text-align: left;
 }
 
-.arrow-slider-container {
-  display: flex;
-  width: 100%;
-  column-gap: 25px;
-  color: #009fe3;
-}
-
 .arrow-sx i,
 .arrow-dx i {
   font-size: 24px;
   cursor: pointer;
-}
-
-.invoice-detail h5 {
-  font-size: 15px;
-}
-
-h4.metadata-field {
-  font-size: 14px;
-  word-break: break-all;
-  white-space: normal;
-}
-
-.header-invoice-detail {
-  height: 40px;
-  display: flex;
-  margin-bottom: 20px;
-  align-items: center;
 }
 
 .dx-loadpanel-message {

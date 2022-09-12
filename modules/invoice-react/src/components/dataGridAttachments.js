@@ -1,9 +1,7 @@
 import React from "react";
 import * as Constants from "../utils/constants";
 import axios from "axios";
-import FileViewer from "react-file-viewer";
-import { CustomErrorComponent } from 'custom-error';
-
+import Embed from 'react-embed';
 import {
   DataGrid,
   Column
@@ -11,9 +9,7 @@ import {
 
 export default function DataGridAttachments(props) {
   const [
-    handleRowDblClick,
-    file,
-    isLoadingFile
+    handleRowDblClick
   ] = useDataGridAttachments(props);
 
   return (
@@ -45,21 +41,11 @@ export default function DataGridAttachments(props) {
           dataField={'size'}
         />
       </DataGrid>
-
-      <embed
-        type="application/pdf"
-        frameBorder="0"
-        scrolling="auto"
-        height="100%"
-        width="100%" id="prova" src=""/>
     </>
   );
 }
 
 function useDataGridAttachments(props) {
-  const [file, setFile] = React.useState();
-  const [isLoadingFile, setIsLoadingFile] = React.useState(true);
-
 
   const handleRowDblClick = (e) => {
     console.log(e);
@@ -74,44 +60,34 @@ function useDataGridAttachments(props) {
       });
       console.log("result get attachment file");
       console.log(attachment);
-      setFile(attachment.data);
-      /*
-      const url = URL.createObjectURL(new Blob([attachment.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.click();
-      */
-
-      /*
-      var byteArray = new Uint8Array(attachment.data);
-      var a = window.document.createElement('a');
-      var filesrc = window.URL.createObjectURL(new Blob(byteArray, { type: 'application/octet-stream' }));
-      document.getElementById("prova").setAttribute("src", filesrc);
+      const blob = new Blob([attachment.data], { type: 'application/pdf' });
+      
+      /* OPEN IN NEW WINDOW
+      // IE
+      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(attachment.data, "filename");
+        return;
+      }
+      // Chrome, FF
+      const fileUrl = URL.createObjectURL(blob);
+      const w = window.open(fileUrl, '_blank');
+      w && w.focus();
       */
 
       var reader = new FileReader();
       reader.onload = function (event) {
-        var filesrc = URL.createObjectURL(attachment.data);
-        document.getElementById("prova").setAttribute("src", filesrc);
+        var filesrc = URL.createObjectURL(blob);
+        props.setFile(filesrc);
       };
       reader.readAsArrayBuffer(attachment.data);
 
-      /*
-      const reader = new FileReader();
-      reader.readAsDataURL(attachment.data);
-      reader.addEventListener("load", function () {
-        document.getElementById("prova").setAttribute("src", filesrc);
-      })
-      */
-      setIsLoadingFile(false);
+      props.setIsLoadingFile(false);
     } catch (err) {
       console.log(err);
     }
   };
 
   return [
-    handleRowDblClick,
-    file,
-    isLoadingFile
+    handleRowDblClick
   ];
 }
