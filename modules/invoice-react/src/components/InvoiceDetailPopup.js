@@ -22,6 +22,7 @@ export default function InvoiceDetailPopup(props) {
     indexPopupRowData,
     fetchAnnotations,
     fetchAttachments,
+    fetchMainFile,
     attachments,
     annotations,
     isAnnotationsLoading,
@@ -29,7 +30,8 @@ export default function InvoiceDetailPopup(props) {
     file,
     setFile,
     isLoadingFile,
-    setIsLoadingFile
+    setIsLoadingFile,
+    inputCard
   ] = useInvoiceDetailPopup(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -37,6 +39,13 @@ export default function InvoiceDetailPopup(props) {
     setPopupRowData(allDataInGrid[indexPopupRowData]);
     fetchAnnotations(allDataInGrid[indexPopupRowData].code);
     fetchAttachments(allDataInGrid[indexPopupRowData].code);
+    if (allDataInGrid[indexPopupRowData].hasMainDocument) {
+      fetchMainFile(2, 
+        allDataInGrid[indexPopupRowData].code,
+        allDataInGrid[indexPopupRowData].documentExtension, 
+        allDataInGrid[indexPopupRowData].prog,
+        allDataInGrid[indexPopupRowData].isSigned);
+    }
   }, [indexPopupRowData]);
 
   return (
@@ -152,7 +161,7 @@ export default function InvoiceDetailPopup(props) {
           <div className="viewer-file-section">
             {
               !isLoadingFile &&
-              <embed src={file} type="application/pdf"></embed>
+              <embed src={file} type="text/html"></embed>
             }
           </div>
         </div>
@@ -172,6 +181,13 @@ function useInvoiceDetailPopup(props) {
   const [isAnnotationsLoading, setIsAnnotationsLoading] = React.useState(true);
   const [file, setFile] = React.useState();
   const [isLoadingFile, setIsLoadingFile] = React.useState(true);
+  const [inputCard, setInputCard] = React.useState({
+    viewType: 2,
+    cardCode: popupRowData.code,
+    entityType: "pdf",
+    resourceName: popupRowData.prog,
+    isSigned: false
+  });
 
   const fetchAttachments = async (cardId) => {
     try {
@@ -188,12 +204,29 @@ function useInvoiceDetailPopup(props) {
     }
   };
 
-  const fetchAttachmentFile = async (cardId, attachmentCode) => {
+  const fetchMainFile = async (viewTypePar, cardCodePar, entityTypePar, resourceNamePar, isSignedPar) => {
     try {
-      const uri = themeDisplay.getPortalURL() + Constants.fetchAttachmentFile + cardId + "/a/" + attachmentCode + "?p_auth=" + Liferay.authToken
-      const attFile = await axios.get(uri);
-      console.log("result post attachment file");
-      console.log(attFile);
+      const uri = themeDisplay.getPortalURL() + Constants.fetchMainFile + "?p_auth=" + Liferay.authToken
+      const inputForMainFile = {
+        viewType: viewTypePar,
+        cardCode: cardCodePar,
+        entityType: entityTypePar,
+        resourceName: resourceNamePar,
+        isSigned: isSignedPar
+      }
+      const mainFile = await axios.post(uri, inputForMainFile, {
+        responseType: 'blob', // <- I was missing this option
+      });
+      console.log("result post main file");
+      console.log(mainFile);
+      const mainblob = new Blob([mainFile.data], { type: 'text/html' });
+      var readerMain = new FileReader();
+      readerMain.onload = function (event) {
+        var mainfilesrc = URL.createObjectURL(mainblob);
+        setFile(mainfilesrc);
+      };
+      readerMain.readAsArrayBuffer(mainFile.data);
+      setIsLoadingFile(false);
       setIsAttachmentsLoading(false);
     } catch (err) {
       if (err.message.indexOf("403") !== -1) {
@@ -254,6 +287,7 @@ function useInvoiceDetailPopup(props) {
     indexPopupRowData,
     fetchAnnotations,
     fetchAttachments,
+    fetchMainFile,
     attachments,
     annotations,
     isAnnotationsLoading,
