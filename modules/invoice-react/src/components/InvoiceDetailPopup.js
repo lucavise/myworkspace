@@ -1,8 +1,11 @@
 import React from "react";
 
 import { Button } from 'devextreme-react/button';
+import SelectBox from 'devextreme-react/select-box';
 import { Popup, ToolbarItem } from 'devextreme-react/popup';
+import ArrayStore from 'devextreme/data/array_store';
 import * as Constants from "../utils/constants";
+import * as TypeFiles from "../data/typefiles"
 import DataGridAnnotations from "./dataGridAnnotations";
 import DataGridAttachments from "./dataGridAttachments";
 import axios from "axios";
@@ -31,7 +34,9 @@ export default function InvoiceDetailPopup(props) {
     setFile,
     isLoadingFile,
     setIsLoadingFile,
-    inputCard
+    typeFile,
+    setTypeFile,
+    handleTypeFileChange
   ] = useInvoiceDetailPopup(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -39,14 +44,27 @@ export default function InvoiceDetailPopup(props) {
     setPopupRowData(allDataInGrid[indexPopupRowData]);
     fetchAnnotations(allDataInGrid[indexPopupRowData].code);
     fetchAttachments(allDataInGrid[indexPopupRowData].code);
-    if (allDataInGrid[indexPopupRowData].hasMainDocument) {
-      fetchMainFile(2, 
-        allDataInGrid[indexPopupRowData].code,
-        allDataInGrid[indexPopupRowData].documentExtension, 
-        allDataInGrid[indexPopupRowData].prog,
-        allDataInGrid[indexPopupRowData].isSigned);
-    }
   }, [indexPopupRowData]);
+
+  React.useEffect(() => {
+    console.log("typefile");
+    console.log(typeFile);
+    if (allDataInGrid[indexPopupRowData].hasMainDocument) {
+      if (typeFile === undefined) {
+        fetchMainFile(0,
+          allDataInGrid[indexPopupRowData].code,
+          allDataInGrid[indexPopupRowData].documentExtension,
+          allDataInGrid[indexPopupRowData].prog,
+          allDataInGrid[indexPopupRowData].isSigned);
+      } else {
+        fetchMainFile(typeFile.value,
+          allDataInGrid[indexPopupRowData].code,
+          allDataInGrid[indexPopupRowData].documentExtension,
+          allDataInGrid[indexPopupRowData].prog,
+          allDataInGrid[indexPopupRowData].isSigned);
+      }
+    }
+  }, [typeFile]);
 
   return (
     <Popup
@@ -59,16 +77,25 @@ export default function InvoiceDetailPopup(props) {
       title={"Fattura n° " + (popupRowData !== undefined && popupRowData.prog) + " - " + (popupRowData !== undefined && popupRowData.fieldTypes[5].value)}
     >
       <ScrollView width='100%' height='100%'>
-        <div className='arrow-slider-container header-invoice-detail'>
-          <div className='arrow-sx' onClick={handleLeftArrowClickSliderInvoice}>
-            <i class="dx-icon fas fa-chevron-left"></i>
+        <div className='header-invoice-detail'>
+          <div className="toolbar-sx-popup">
+            <div className='arrow-sx' onClick={handleLeftArrowClickSliderInvoice}>
+              <i class="dx-icon fas fa-chevron-left"></i>
+            </div>
+            <div className='arrow-dx' onClick={handleRightArrowClickSliderInvoice}>
+              <i class="dx-icon fas fa-chevron-right"></i>
+            </div>
+            <Button text={"SCARICA"} name="download" hint="Scarica" icon="fdx-icon fas fa-caret-down" />
+            <Button text={"INVIA"} name="send" hint="Invia" icon="dx-icon fas fa-envelope" />
+            <Button text={"MODIFICA"} name="send" hint="Modifica" icon="dx-icon fas fa-edit" />
           </div>
-          <div className='arrow-dx' onClick={handleRightArrowClickSliderInvoice}>
-            <i class="dx-icon fas fa-chevron-right"></i>
+          <div className="toolbar-dx-popup">
+            <SelectBox
+              dataSource={TypeFiles.typesFormatVisualization}
+              displayExpr="name"
+              defaultValue={TypeFiles.typesFormatVisualization[0]}
+              onValueChanged={handleTypeFileChange} />
           </div>
-          <Button text={"SCARICA"} name="download" hint="Scarica" icon="fdx-icon fas fa-caret-down" />
-          <Button text={"INVIA"} name="send" hint="Invia" icon="dx-icon fas fa-envelope" />
-          <Button text={"MODIFICA"} name="send" hint="Modifica" icon="dx-icon fas fa-edit" />
         </div>
         <div className="metadata-notes-attachments-viewer">
           <div className="metadata-and-lists-section">
@@ -161,7 +188,7 @@ export default function InvoiceDetailPopup(props) {
           <div className="viewer-file-section">
             {
               !isLoadingFile &&
-              <embed src={file} type="text/html"></embed>
+              <embed src={file} type="application/pdf"></embed>
             }
           </div>
         </div>
@@ -182,11 +209,15 @@ function useInvoiceDetailPopup(props) {
   const [file, setFile] = React.useState();
   const [isLoadingFile, setIsLoadingFile] = React.useState(true);
   const [inputCard, setInputCard] = React.useState({
-    viewType: 2,
+    viewType: 0,
     cardCode: popupRowData.code,
     entityType: "pdf",
     resourceName: popupRowData.prog,
     isSigned: false
+  });
+  const [typeFile, setTypeFile] = React.useState({
+    value: 0,
+    desc: "application/pdf"
   });
 
   const fetchAttachments = async (cardId) => {
@@ -219,7 +250,10 @@ function useInvoiceDetailPopup(props) {
       });
       console.log("result post main file");
       console.log(mainFile);
-      const mainblob = new Blob([mainFile.data], { type: 'text/html' });
+      const type = mainFile.headers.typefile;
+      const typeDescfound = TypeFiles.typefiles.find((item) => item.value === type);
+      // setTypeFile(typeDescfound);
+      const mainblob = new Blob([mainFile.data], { type: "application/pdf" });
       var readerMain = new FileReader();
       readerMain.onload = function (event) {
         var mainfilesrc = URL.createObjectURL(mainblob);
@@ -234,7 +268,6 @@ function useInvoiceDetailPopup(props) {
       }
     }
   };
-
 
   const fetchAnnotations = async (cardId) => {
     try {
@@ -275,6 +308,10 @@ function useInvoiceDetailPopup(props) {
     // setPopupRowData(allDataInGrid[indexPopupRowData]);
   }
 
+  const handleTypeFileChange = (e) => {
+    setTypeFile({ ...typeFile, value: e.value.id, desc: TypeFiles.typefiles.find((item) => item.value === e.value.id).desc });
+  }
+
   return [
     popupRowDataVisible,
     setPopupRowDataVisible,
@@ -295,6 +332,9 @@ function useInvoiceDetailPopup(props) {
     file,
     setFile,
     isLoadingFile,
-    setIsLoadingFile
+    setIsLoadingFile,
+    typeFile,
+    setTypeFile,
+    handleTypeFileChange
   ];
 }

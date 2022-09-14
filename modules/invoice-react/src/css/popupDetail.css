@@ -17,13 +17,6 @@
 	height: 100%;
 }
 
-.arrow-slider-container {
-  display: flex;
-  width: 100%;
-  column-gap: 25px;
-  color: #009fe3;
-}
-
 .invoice-detail h5 {
   font-size: 0.85rem;
 	color: #009fe3;
@@ -41,6 +34,18 @@ h4.metadata-field {
   display: flex;
   margin-bottom: 20px;
   align-items: center;
+  justify-content: space-between;
+}
+
+.toolbar-sx-popup {
+  align-items: center;
+  display: flex;
+  height: 40px;
+  color: #009fe3;
+  -webkit-column-gap: 25px;
+  column-gap: 25px;
+  display: flex;
+  width: 100%;
 }
 
 h4.title-section {
