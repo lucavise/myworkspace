@@ -5,7 +5,7 @@ export const typefiles = [
 	},
 	{
     value: 1,
-    desc: "application/pdf"
+    desc: "text/html"
 	},
 	{
     value: 2,

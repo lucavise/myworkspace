@@ -2,8 +2,7 @@ import React from "react";
 
 import { Button } from 'devextreme-react/button';
 import SelectBox from 'devextreme-react/select-box';
-import { Popup, ToolbarItem } from 'devextreme-react/popup';
-import ArrayStore from 'devextreme/data/array_store';
+import { Popup } from 'devextreme-react/popup';
 import * as Constants from "../utils/constants";
 import * as TypeFiles from "../data/typefiles"
 import DataGridAnnotations from "./dataGridAnnotations";
@@ -11,6 +10,7 @@ import DataGridAttachments from "./dataGridAttachments";
 import axios from "axios";
 import ScrollView from 'devextreme-react/scroll-view';
 import '../css/popupDetail.css';
+import DataGridSDIreceipts from "./DataGridSDIreceipts";
 
 export default function InvoiceDetailPopup(props) {
   const [
@@ -36,7 +36,10 @@ export default function InvoiceDetailPopup(props) {
     setIsLoadingFile,
     typeFile,
     setTypeFile,
-    handleTypeFileChange
+    handleTypeFileChange,
+    fetchSDIreceipts,
+    SDIreceipts,
+    isSDIreceiptsLoading
   ] = useInvoiceDetailPopup(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -44,6 +47,7 @@ export default function InvoiceDetailPopup(props) {
     setPopupRowData(allDataInGrid[indexPopupRowData]);
     fetchAnnotations(allDataInGrid[indexPopupRowData].code);
     fetchAttachments(allDataInGrid[indexPopupRowData].code);
+    fetchSDIreceipts(allDataInGrid[indexPopupRowData].code);
   }, [indexPopupRowData]);
 
   React.useEffect(() => {
@@ -166,13 +170,10 @@ export default function InvoiceDetailPopup(props) {
               </div>
             </div>
             <div className="attachments-announcements">
-              <h4 className="title-section">Elenco Ricevute e Comunicazioni SDI</h4>
-              <div className="annotations-section">
-                <h4 className="title-section">Annotazioni</h4>
+              <div className="sdi-receipts-section">
+                <h4 className="title-section">Elenco Ricevute e Comunicazioni SDI</h4>
                 {
-                  !allDataInGrid[indexPopupRowData].hasNotes ? <div>Non ci sono note</div> :
-                    isAnnotationsLoading && allDataInGrid[indexPopupRowData].hasNotes && <div>Sto caricando le note..</div> ||
-                    !isAnnotationsLoading && allDataInGrid[indexPopupRowData].hasNotes && <DataGridAnnotations list={annotations}></DataGridAnnotations>
+                  !isSDIreceiptsLoading && <DataGridSDIreceipts list={SDIreceipts}></DataGridSDIreceipts>
                 }
               </div>
               <div className="attachments-section">
@@ -181,6 +182,14 @@ export default function InvoiceDetailPopup(props) {
                   !allDataInGrid[indexPopupRowData].hasAttachments ? <div>Non ci sono allegati</div> :
                     isAttachmentsLoading && allDataInGrid[indexPopupRowData].hasAttachments && <div>Sto caricando gli allegati..</div> ||
                     !isAttachmentsLoading && allDataInGrid[indexPopupRowData].hasAttachments && <DataGridAttachments isLoadingFile={isLoadingFile} setIsLoadingFile={setIsLoadingFile} file={file} setFile={setFile} list={attachments}></DataGridAttachments>
+                }
+              </div>
+              <div className="annotations-section">
+                <h4 className="title-section">Annotazioni</h4>
+                {
+                  !allDataInGrid[indexPopupRowData].hasNotes ? <div>Non ci sono note</div> :
+                    isAnnotationsLoading && allDataInGrid[indexPopupRowData].hasNotes && <div>Sto caricando le note..</div> ||
+                    !isAnnotationsLoading && allDataInGrid[indexPopupRowData].hasNotes && <DataGridAnnotations list={annotations}></DataGridAnnotations>
                 }
               </div>
             </div>
@@ -204,8 +213,10 @@ function useInvoiceDetailPopup(props) {
   const [allDataInGrid, setAllDataInGrid] = React.useState(props.allDataInGrid);
   const [attachments, setAttachments] = React.useState([]);
   const [annotations, setAnnotations] = React.useState([]);
+  const [SDIreceipts, setSDIreceipts] = React.useState([]);
   const [isAttachmentsLoading, setIsAttachmentsLoading] = React.useState(true);
   const [isAnnotationsLoading, setIsAnnotationsLoading] = React.useState(true);
+  const [isSDIreceiptsLoading, setIsSDIreceiptsLoading] = React.useState(true);
   const [file, setFile] = React.useState();
   const [isLoadingFile, setIsLoadingFile] = React.useState(true);
   const [inputCard, setInputCard] = React.useState({
@@ -251,9 +262,11 @@ function useInvoiceDetailPopup(props) {
       console.log("result post main file");
       console.log(mainFile);
       const type = mainFile.headers.typefile;
-      const typeDescfound = TypeFiles.typefiles.find((item) => item.value === type);
+      console.log("type --> " + type);
+      const typeDescfound = TypeFiles.typefiles.find((item) => item.value === parseInt(type)).desc;
+      console.log(typeDescfound);
       // setTypeFile(typeDescfound);
-      const mainblob = new Blob([mainFile.data], { type: "application/pdf" });
+      const mainblob = new Blob([mainFile.data], { type: typeDescfound });
       var readerMain = new FileReader();
       readerMain.onload = function (event) {
         var mainfilesrc = URL.createObjectURL(mainblob);
@@ -277,6 +290,21 @@ function useInvoiceDetailPopup(props) {
       console.log(listannotations.data);
       setAnnotations(listannotations.data);
       setIsAnnotationsLoading(false);
+    } catch (err) {
+      if (err.message.indexOf("403") !== -1) {
+
+      }
+    }
+  };
+
+  const fetchSDIreceipts = async (cardId) => {
+    try {
+      const uri = themeDisplay.getPortalURL() + Constants.fetchSDIreceipts + cardId + "?p_auth=" + Liferay.authToken
+      const listReceipts = await axios.get(uri);
+      console.log("result receipts");
+      console.log(listReceipts.data);
+      setSDIreceipts(listReceipts.data);
+      setIsSDIreceiptsLoading(false);
     } catch (err) {
       if (err.message.indexOf("403") !== -1) {
 
@@ -335,6 +363,9 @@ function useInvoiceDetailPopup(props) {
     setIsLoadingFile,
     typeFile,
     setTypeFile,
-    handleTypeFileChange
+    handleTypeFileChange,
+    fetchSDIreceipts,
+    SDIreceipts,
+    isSDIreceiptsLoading
   ];
 }

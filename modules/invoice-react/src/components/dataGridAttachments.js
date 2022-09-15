@@ -3,8 +3,10 @@ import * as Constants from "../utils/constants";
 import axios from "axios";
 import Embed from 'react-embed';
 import {
-  DataGrid,
-  Column
+	DataGrid,
+	Column,
+	Selection,
+	Button
 } from 'devextreme-react/data-grid';
 
 export default function DataGridAttachments(props) {
@@ -28,6 +30,13 @@ export default function DataGridAttachments(props) {
         onRowDblClick={handleRowDblClick}
       // onContentReady={handleContentReadyOfDataGrid}
       >
+        <Selection mode="multiple" selectAllMode={true} deferred={true} />
+        <Column type="buttons" width={40}>
+          <Button name="open" hint="Apri in una nuova finestra" icon="far fa-file-pdf" onClick={() => { console.log("ciao") }} />
+        </Column>
+        <Column type="buttons" width={40}>
+          <Button name="openhere" hint="Apri" icon="far fa-eye" onClick={() => { console.log("ciao") }} />
+        </Column>
         <Column
           caption={'Nome'}
           dataField={'name'}
@@ -61,7 +70,7 @@ function useDataGridAttachments(props) {
       console.log("result get attachment file");
       console.log(attachment);
       const blob = new Blob([attachment.data], { type: 'application/pdf' });
-      
+
       /* OPEN IN NEW WINDOW
       // IE
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {

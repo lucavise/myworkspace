@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import '../App.css';
 import CustomStore from "devextreme/data/custom_store";
 import { inputSearchObj } from "../data/inputSearchObj";
-import DataGridStore from "./dataGridStore";
+import DataGridStore from "./DataGridStore";
 import { Toast } from 'devextreme-react/toast';
 import * as Constants from "../utils/constants";
 
