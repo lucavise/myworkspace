@@ -173,7 +173,7 @@ export default function InvoiceDetailPopup(props) {
               <div className="sdi-receipts-section">
                 <h4 className="title-section">Elenco Ricevute e Comunicazioni SDI</h4>
                 {
-                  !isSDIreceiptsLoading && <DataGridSDIreceipts list={SDIreceipts}></DataGridSDIreceipts>
+                  !isSDIreceiptsLoading && <DataGridSDIreceipts list={SDIreceipts} setFile={setFile}></DataGridSDIreceipts>
                 }
               </div>
               <div className="attachments-section">
@@ -198,6 +198,10 @@ export default function InvoiceDetailPopup(props) {
             {
               !isLoadingFile &&
               <embed src={file} type="application/pdf"></embed>
+            }
+            {
+              !isLoadingFile &&
+              <a id="downloadfile" href={file}></a>
             }
           </div>
         </div>

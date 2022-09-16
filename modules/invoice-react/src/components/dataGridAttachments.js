@@ -3,15 +3,16 @@ import * as Constants from "../utils/constants";
 import axios from "axios";
 import Embed from 'react-embed';
 import {
-	DataGrid,
-	Column,
-	Selection,
-	Button
+  DataGrid,
+  Column,
+  Selection,
+  Button
 } from 'devextreme-react/data-grid';
 
 export default function DataGridAttachments(props) {
   const [
-    handleRowDblClick
+    fetchAndShowFile,
+    fetchAndOpenFile
   ] = useDataGridAttachments(props);
 
   return (
@@ -27,15 +28,14 @@ export default function DataGridAttachments(props) {
         showColumnLines={false}
         showRowLines={true}
         rowAlternationEnabled={true}
-        onRowDblClick={handleRowDblClick}
       // onContentReady={handleContentReadyOfDataGrid}
       >
         <Selection mode="multiple" selectAllMode={true} deferred={true} />
         <Column type="buttons" width={40}>
-          <Button name="open" hint="Apri in una nuova finestra" icon="far fa-file-pdf" onClick={() => { console.log("ciao") }} />
+          <Button name="open" hint="Apri in una nuova finestra" icon="far fa-file-pdf" onClick={fetchAndOpenFile} />
         </Column>
         <Column type="buttons" width={40}>
-          <Button name="openhere" hint="Apri" icon="far fa-eye" onClick={() => { console.log("ciao") }} />
+          <Button name="openhere" hint="Apri" icon="far fa-eye" onClick={fetchAndShowFile} />
         </Column>
         <Column
           caption={'Nome'}
@@ -56,10 +56,40 @@ export default function DataGridAttachments(props) {
 
 function useDataGridAttachments(props) {
 
-  const handleRowDblClick = (e) => {
-    console.log(e);
-    fetchAttachmentFile(e.data);
+  const fetchAndShowFile = (e) => {
+    fetchAttachmentFile(e.row.data);
   }
+
+  const fetchAndOpenFile = async (e) => {
+    try {
+      const uri = themeDisplay.getPortalURL() + Constants.fetchAttachmentFile + e.row.data.attachmentCardId + "/a/" + e.row.data.code + "?p_auth=" + Liferay.authToken
+      const mainFile = await axios.get(uri, {
+        responseType: 'blob', // <- I was missing this option
+      });
+      console.log("result post main file");
+      console.log(mainFile);
+      const type = mainFile.headers.typefile;
+
+      // setTypeFile(typeDescfound);
+      const mainblob = new Blob([mainFile.data], { type: "application/pdf" });
+      var readerMain = new FileReader();
+      readerMain.onload = function (event) {
+        var mainfilesrc = URL.createObjectURL(mainblob);
+        // props.setFile(mainfilesrc);
+        const link = document.createElement('a');
+        link.setAttribute("target", "_blank");
+        link.href = mainfilesrc;
+        link.click();
+      };
+      readerMain.readAsArrayBuffer(mainFile.data);
+      // setIsLoadingFile(false);
+      // setIsAttachmentsLoading(false);
+    } catch (err) {
+      if (err.message.indexOf("403") !== -1) {
+
+      }
+    }
+  };
 
   const fetchAttachmentFile = async (ev) => {
     try {
@@ -97,6 +127,7 @@ function useDataGridAttachments(props) {
   };
 
   return [
-    handleRowDblClick
+    fetchAndShowFile,
+    fetchAndOpenFile
   ];
 }
