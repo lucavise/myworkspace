@@ -100,7 +100,8 @@ export default function DataGridStore(props) {
     handlePageIndexChange,
     handlePageSizeChange,
     isAttachmentsIconVisible,
-    isCommentsIconVisible
+    isCommentsIconVisible,
+    handleClosedDropboxInvoiceState
   ] = useDataGridStore(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -270,6 +271,7 @@ export default function DataGridStore(props) {
               dataSource={optionsInvoiceState}
               onValueChanged={handleValueChangedInvoiceState}
               contentRender={treeViewRender}
+              onClosed={handleClosedDropboxInvoiceState}
             />
           </Item>
           <Item location="before">
@@ -590,30 +592,33 @@ function useDataGridStore(props) {
     }
 
     if (e.value !== undefined) {
-      console.log(e);
       const prev = e.previousValue;
       const val = e.value;
-      if (val !== undefined && val !== null) {
-        const valueTo = val.map((item) => optionsInvoiceState.map((i) => item === i.ID));
-        console.log(valueTo);
-      }
 
-      /*
-      const nextInputSearchFields = [
-        ...props.inputSearch.paramIn.SearchCriteria.Fields, {
-          FieldValueTo:  "'DA LAVORARE'",
-          FieldId: "21",
-          FieldValue: "'DA LAVORARE'"
-        }
-      ]
-  
-      const nextInputSearchSearchCriteria = { ...props.inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
-      const nextInputSearchParamIn = { ...props.inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
-      props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
-      props.setIsLoadingSpinnerVisible(true);
-      */
+      if (val !== undefined && val !== null) {
+        const arrValueToObjInput = optionsInvoiceState.filter(it => val.includes(it.ID));
+        const valueToObjInput = arrValueToObjInput.reduce((accumulator, item) => accumulator += item.name + ",", '')
+        localStorage.setItem("valueToObjInput", valueToObjInput.substring(0, valueToObjInput.length - 1))
+        console.log(localStorage.getItem("valueToObjInput"));
+      }
       setMultiValuesInvoiceState(e.value);
     }
+  }
+
+  const handleClosedDropboxInvoiceState = () => {
+    const stateToInputStr = localStorage.getItem("valueToObjInput");
+    console.log("---> " + stateToInputStr);
+    const nextInputSearchFields = [
+      ...props.inputSearch.paramIn.SearchCriteria.Fields, {
+        FieldValueTo: stateToInputStr,
+        FieldId: "21",
+        FieldValue: stateToInputStr
+      }
+    ]
+    const nextInputSearchSearchCriteria = { ...props.inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
+    const nextInputSearchParamIn = { ...props.inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
+    props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
+    props.setIsLoadingSpinnerVisible(true);
   }
 
   const handleChange = (newValue) => {
@@ -621,10 +626,10 @@ function useDataGridStore(props) {
   }
 
   const handleItemSelectionChangedInvoiceState = (e) => {
-    // console.log(e);
-    const isPresent = multiValuesInvoiceState.filter((item) => item !== undefined && item === e.itemData.ID)
+    // const isPresent = multiValuesInvoiceState.filter((item) => item !== undefined && item === e.itemData.ID)
     setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
     //console.log(isPresent);
+    console.log(e);
   }
 
   const handlePageIndexChange = (e) => {
@@ -720,6 +725,7 @@ function useDataGridStore(props) {
     handlePageIndexChange,
     handlePageSizeChange,
     isAttachmentsIconVisible,
-    isCommentsIconVisible
+    isCommentsIconVisible,
+    handleClosedDropboxInvoiceState
   ]
 }
