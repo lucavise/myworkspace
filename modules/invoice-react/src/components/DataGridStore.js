@@ -607,7 +607,6 @@ function useDataGridStore(props) {
 
   const handleClosedDropboxInvoiceState = () => {
     const stateToInputStr = localStorage.getItem("valueToObjInput");
-    console.log("---> " + stateToInputStr);
     const nextInputSearchFields = [
       ...props.inputSearch.paramIn.SearchCriteria.Fields, {
         FieldValueTo: stateToInputStr,
