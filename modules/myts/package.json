@@ -25,6 +25,11 @@
     "deploy:liferay": "npm run build:liferay && lnbs-deploy"
   },
   "eslintConfig": {
+    "globals": {
+      "Liferay": "readonly",
+      "themeDisplay": "readonly",
+      "_LIFERAY_PARAMS_": "readonly"
+    },
     "extends": [
       "react-app",
       "react-app/jest"

@@ -1,0 +1,22 @@
+{
+	"$schema": "https://raw.githubusercontent.com/liferay/liferay-frontend-projects/master/maintenance/projects/js-toolkit/resources/schemas/configuration.schema.json",
+	"system": {
+		"category": "invoicelist",
+		"name": "invoicelist",
+		"fields": {}
+	},
+	"portletInstance": {
+		"fields": {
+			"baseUrl": {
+				"default": "provadefault",
+				"name": "base-url",
+				"options": {
+					"prova1": "base-url-svil",
+					"prova2": "base-url-test",
+					"prova3": "base-url-prod"
+				},
+				"type": "string"
+			}
+		}
+	}
+}
