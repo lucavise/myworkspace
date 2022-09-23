@@ -6,6 +6,7 @@ import { inputSearchObj } from "../data/inputSearchObj";
 import DataGridStore from "./DataGridStore";
 import { Toast } from 'devextreme-react/toast';
 import * as Constants from "../utils/constants";
+import getConfiguration from "../configuration";
 
 
 export default function InvoiceApp() {
@@ -152,6 +153,10 @@ function useInvoiceApp() {
   const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + Constants.retriveCardsPOST + "?p_auth=" + Liferay.authToken);
   const [uriRetrieveCardsGET, setUriRetrieveCardsGET] = React.useState(themeDisplay.getPortalURL() + Constants.retrieveCardsGET + "?p_auth=" + Liferay.authToken);
   const [toastUnauthorizeIsVisible, setToastUnauthorizeIsVisible] = React.useState(false);
+  const [conf, setConf] = React.useState();
+
+  console.log("conf");
+  console.log(getConfiguration().baseUrl);
 
   return [
     inputSearch,

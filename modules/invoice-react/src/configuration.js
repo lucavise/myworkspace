@@ -19,7 +19,6 @@ const PORTLET_INSTANCE_CONFIGURATION_PROD = {
 
 export default function getConfiguration() {
   return Object.assign(
-    PORTLET_INSTANCE_CONFIGURATION_SVIL,
     LIFERAY_PARAMS?.configuration?.portletInstance ?? {},
   );
 }
