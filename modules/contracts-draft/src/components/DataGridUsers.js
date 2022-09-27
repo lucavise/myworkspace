@@ -4,7 +4,7 @@ import { contractsData } from "../data/contracts";
 
 const contracts = contractsData;
 
-export default function DataGridContracts() {
+export default function DataGridUsers() {
 	return (
 		<div>
 			<DataGrid

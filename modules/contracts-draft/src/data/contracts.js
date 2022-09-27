@@ -1,0 +1,28 @@
+export const contractsData = [
+	{
+		"contractsId": "463c3ba4-9d96-4654-94fe-592114e5da7e",
+		"archiflowhostname": "192.168.31.118",
+		"archiflowport": 443,
+		"archiflowpwd": "45441D817530CCFF9C2986D64900DA3B",
+		"archiflowurl": "/ArchiflowService/",
+		"archiflowuser": "ADP",
+		"contractnumber": "Contratto ACME",
+		"createdatatime": "1999-12-31 23:59:59.100",
+		"createuser": "20139 - test",
+		"ftpmax": 5,	
+		"ftpport": 22,
+		"ftppwd": "ABA954AE01358B92CC110CF312DA36FA",
+		"ftpserver": "ftpdmo.siav.it",
+		"ftpuser": "FtpWintech",
+		"haserrors": "ftpServer,ftpPort,ftpUser,ftpPwd",
+		"https": 1,
+		"invtot": 100000,
+		"lastmodifieduser": "20139 - test",
+		"lrcompanyid": 20099,
+		"lrorganizationid": 37466,
+		"maxusers": -1,
+		"name": "Contratto ACME 118",
+		"note": "",
+		"siteid": 37468,
+		"status": 1
+	}];
