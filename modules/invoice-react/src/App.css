@@ -14,11 +14,10 @@
 
 .panel-container {
   width: 100%;
-  padding: 10px;
-  background-color: white;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .btn-same-tab {
@@ -117,4 +116,24 @@
   width: 100%;
   flex-direction: column;
   row-gap: 10px;
+}
+
+.three-dots-loading {
+  display: flex;
+  position: absolute;
+  width: calc(100% - 45px);
+  top: 130px;
+  justify-content: center;
+  left: 22px;
+  height: calc(100% - 153px);
+  z-index: 999;
+  background: rgb(0 0 0 / 27%);
+  align-items: center;
+}
+
+.modelname-interval .dx-toolbar-item-content {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px dotted;
 }

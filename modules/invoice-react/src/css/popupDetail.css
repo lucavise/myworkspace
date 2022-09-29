@@ -10,6 +10,7 @@
 
 .viewer-file-section {
 	width: calc(40% - 5px);
+  position: relative;
 }
 
 .viewer-file-section embed {

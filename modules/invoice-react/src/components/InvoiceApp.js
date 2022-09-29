@@ -155,8 +155,9 @@ function useInvoiceApp() {
   const [toastUnauthorizeIsVisible, setToastUnauthorizeIsVisible] = React.useState(false);
   const [conf, setConf] = React.useState();
 
-  console.log("conf");
-  console.log(getConfiguration().baseUrl);
+  // LEGGI CONF DELLA PORTLET
+  // console.log("conf");
+  // console.log(getConfiguration().baseUrl);
 
   return [
     inputSearch,

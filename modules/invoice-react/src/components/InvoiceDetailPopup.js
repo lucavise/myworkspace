@@ -11,6 +11,7 @@ import axios from "axios";
 import ScrollView from 'devextreme-react/scroll-view';
 import '../css/popupDetail.css';
 import DataGridSDIreceipts from "./DataGridSDIreceipts";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function InvoiceDetailPopup(props) {
   const [
@@ -51,6 +52,7 @@ export default function InvoiceDetailPopup(props) {
   }, [indexPopupRowData]);
 
   React.useEffect(() => {
+    setIsLoadingFile(true);
     console.log("typefile");
     console.log(typeFile);
     if (allDataInGrid[indexPopupRowData].hasMainDocument) {
@@ -68,7 +70,7 @@ export default function InvoiceDetailPopup(props) {
           allDataInGrid[indexPopupRowData].isSigned);
       }
     }
-  }, [typeFile]);
+  }, [indexPopupRowData, typeFile]);
 
   return (
     <Popup
@@ -195,6 +197,9 @@ export default function InvoiceDetailPopup(props) {
             </div>
           </div>
           <div className="viewer-file-section">
+            {
+              isLoadingFile && <LoadingSpinner></LoadingSpinner>
+            }
             {
               !isLoadingFile &&
               <embed src={file} type="application/pdf"></embed>

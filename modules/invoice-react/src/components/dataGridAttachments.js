@@ -12,7 +12,8 @@ import {
 export default function DataGridAttachments(props) {
   const [
     fetchAndShowFile,
-    fetchAndOpenFile
+    fetchAndOpenFile,
+    handleVisibleAttachment
   ] = useDataGridAttachments(props);
 
   return (
@@ -35,7 +36,7 @@ export default function DataGridAttachments(props) {
           <Button name="open" hint="Apri in una nuova finestra" icon="far fa-file-pdf" onClick={fetchAndOpenFile} />
         </Column>
         <Column type="buttons" width={40}>
-          <Button name="openhere" hint="Apri" icon="far fa-eye" onClick={fetchAndShowFile} />
+          <Button name="openhere" visible={handleVisibleAttachment(props.list.name)} hint="Apri" icon="far fa-eye" onClick={fetchAndShowFile} />
         </Column>
         <Column
           caption={'Nome'}
@@ -55,12 +56,38 @@ export default function DataGridAttachments(props) {
 }
 
 function useDataGridAttachments(props) {
+  console.log(props);
+  const handleVisibleAttachment = (name) => {
+    if (name !== null && name !== undefined) {
+      switch (name) {
+        case name.indexOf(".PDF") != -1:
+          return true;
+        case name.indexOf(".pdf") != -1:
+          return true;
+        case name.indexOf(".xml") != -1:
+          return false;
+        case name.indexOf(".p7m") != -1:
+          return false;
+        case name.indexOf(".P7M") != -1:
+          return false;
+        case name.indexOf(".log") != -1:
+          return false;
+        case name.indexOf(".zip") != -1:
+          return false;
+        default: 
+          return false;
+      }
+    } else {
+      return false;
+    }
+  }
 
   const fetchAndShowFile = (e) => {
     fetchAttachmentFile(e.row.data);
   }
 
   const fetchAndOpenFile = async (e) => {
+    
     try {
       const uri = themeDisplay.getPortalURL() + Constants.fetchAttachmentFile + e.row.data.attachmentCardId + "/a/" + e.row.data.code + "?p_auth=" + Liferay.authToken
       const mainFile = await axios.get(uri, {
@@ -68,20 +95,22 @@ function useDataGridAttachments(props) {
       });
       console.log("result post main file");
       console.log(mainFile);
-      const type = mainFile.headers.typefile;
-
+      console.log("TYPE --> " + mainFile.headers.extension);
+      
+      if (mainFile.data.size !== 0) {
+        const mainblob = new Blob([mainFile.data], { type: handleApplicationType(mainFile.headers.extension) });
+        var readerMain = new FileReader();
+        readerMain.onload = function (event) {
+          var mainfilesrc = URL.createObjectURL(mainblob);
+          // props.setFile(mainfilesrc);
+          const link = document.createElement('a');
+          link.setAttribute("target", "_blank");
+          link.href = mainfilesrc;
+          link.click();
+        };
+        readerMain.readAsArrayBuffer(mainFile.data);
+      }
       // setTypeFile(typeDescfound);
-      const mainblob = new Blob([mainFile.data], { type: "application/pdf" });
-      var readerMain = new FileReader();
-      readerMain.onload = function (event) {
-        var mainfilesrc = URL.createObjectURL(mainblob);
-        // props.setFile(mainfilesrc);
-        const link = document.createElement('a');
-        link.setAttribute("target", "_blank");
-        link.href = mainfilesrc;
-        link.click();
-      };
-      readerMain.readAsArrayBuffer(mainFile.data);
       // setIsLoadingFile(false);
       // setIsAttachmentsLoading(false);
     } catch (err) {
@@ -126,8 +155,28 @@ function useDataGridAttachments(props) {
     }
   };
 
+  const handleApplicationType = (extension) => {
+    switch (extension) {
+      case ".P7M":
+        return "application/pkcs7-mime";
+      case ".xml":
+        return "application/xml";
+      case ".p7m":
+        return "application/pkcs7-mime";
+      case ".PDF":
+        return "application/pdf";
+      case ".log":
+        return "text/plain";
+      case ".zip":
+        return "application/zip";
+      default: 
+        return "application/pdf";
+    }
+  }
+
   return [
     fetchAndShowFile,
-    fetchAndOpenFile
+    fetchAndOpenFile,
+    handleVisibleAttachment
   ];
 }

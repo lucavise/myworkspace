@@ -26,6 +26,7 @@ import InvoiceDetailPopup from './InvoiceDetailPopup';
 import { ThreeDots } from 'react-loader-spinner'
 import { inputSearchObj } from "../data/inputSearchObj";
 import { inputSearchObjCurrentMonth } from "../data/inputSearchObjCurrentMonth";
+import LoadingSpinner from "./LoadingSpinner";
 
 const exportFormats = ['pdf'];
 const allowedPageSizes = [10, 20, 50, 100];
@@ -101,7 +102,9 @@ export default function DataGridStore(props) {
     handlePageSizeChange,
     isAttachmentsIconVisible,
     isCommentsIconVisible,
-    handleClosedDropboxInvoiceState
+    handleClosedDropboxInvoiceState,
+    textModel,
+    setTextModel
   ] = useDataGridStore(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -142,7 +145,7 @@ export default function DataGridStore(props) {
   };
 
   const buttonForPopup = {
-    text: "Compreso tra.. ",
+    text: textModel,
     onClick: function () {
       setPopupVisibility(!isPopupVisible);
       console.log(isPopupVisible)
@@ -224,6 +227,7 @@ export default function DataGridStore(props) {
   const getCurrentMonthData = () => {
     props.setInputSearch({ ...props.inputSearch, ...inputSearchObjCurrentMonth })
     props.setIsLoadingSpinnerVisible(true);
+    setTextModel("Mese Corrente");
   }
 
   return (
@@ -301,6 +305,7 @@ export default function DataGridStore(props) {
             key={1}
           />
           <Item
+            cssClass={"modelname-interval"}
             widget="dxButton"
             location="center"
             options={buttonForPopup}
@@ -473,24 +478,33 @@ export default function DataGridStore(props) {
         />
 
       </DataGrid>
-      <ThreeDots
+      {
+        props.isLoadingSpinnerVisible && <LoadingSpinner />
+      }
+      {
+        /*
+        <ThreeDots
         height="50"
-        width="50"
+        width="100"
         radius="9"
         color="#009fe3"
         ariaLabel="three-dots-loading"
         wrapperStyle={{
           position: "absolute",
-          width: "300px",
-          top: "50%",
+          width: "calc(100% - 45px)",
+          top: "130px",
           justifyContent: "center",
-          left: "calc(50% - 150px)",
-          background: "white",
-          height: "50px"
+          left: "22px",
+          background: "rgb(0 0 0 / 27%)",
+          height: "calc(100% - 153px)",
+          alignItems: "center"
         }}
-        wrapperClassName=""
+        wrapperClassName="three-dots-loading"
         visible={props.isLoadingSpinnerVisible}
       />
+        */
+      }
+      
       <Popup
         width={550}
         height={550}
@@ -527,6 +541,7 @@ function useDataGridStore(props) {
   const [invoiceType, setInvoiceType] = React.useState();
   const [invoicePeriod, setInvoicePeriod] = React.useState();
   const [input, setInput] = React.useState(props.inputSearch);
+  const [textModel, setTextModel] = React.useState("Compreso tra 1/1/2018 : 31/12/2018");
 
   /*
   const getInvoiceData = async () => {
@@ -563,11 +578,11 @@ function useDataGridStore(props) {
   */
 
   const isAttachmentsIconVisible = (e) => {
-    return e.row.cells[e.row.rowIndex].data.hasAttachments;
+    return e.row.data.hasAttachments;
   }
 
   const isCommentsIconVisible = (e) => {
-    return e.row.cells[e.row.rowIndex].data.hasNotes;
+    return e.row.data.hasNotes;
   }
 
   const togglePopup = () => {
@@ -725,6 +740,8 @@ function useDataGridStore(props) {
     handlePageSizeChange,
     isAttachmentsIconVisible,
     isCommentsIconVisible,
-    handleClosedDropboxInvoiceState
+    handleClosedDropboxInvoiceState,
+    textModel,
+    setTextModel
   ]
 }
