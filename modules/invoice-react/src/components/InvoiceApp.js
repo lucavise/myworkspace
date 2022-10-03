@@ -1,16 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 
 import '../App.css';
-import CustomStore from "devextreme/data/custom_store";
-import { inputSearchObj } from "../data/inputSearchObj";
-import DataGridStore from "./DataGridStore";
+import CustomStore from 'devextreme/data/custom_store';
+import { inputSearchObj } from '../data/inputSearchObj';
+import DataGridStore from './DataGridStore';
 import { Toast } from 'devextreme-react/toast';
-import * as Constants from "../utils/constants";
-import getConfiguration from "../configuration";
-
+import * as Constants from '../utils/constants';
+import getConfiguration from '../configuration';
 
 export default function InvoiceApp() {
-
   const [
     inputSearch,
     setInputSearch,
@@ -21,65 +19,70 @@ export default function InvoiceApp() {
     uriRetrieveCards,
     uriRetrieveCardsGET,
     toastUnauthorizeIsVisible,
-    setToastUnauthorizeIsVisible
+    setToastUnauthorizeIsVisible,
   ] = useInvoiceApp();
 
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(inputSearch)
+    body: JSON.stringify(inputSearch),
   };
 
-  const isNotEmpty = (value) => value !== undefined && value !== null && value !== '';
+  const isNotEmpty = (value) =>
+    value !== undefined && value !== null && value !== '';
 
-  const customStore = React.useMemo(() => new CustomStore({
-    key: 'prog',
-    load: async (loadOptions) => {
-      let params = '?';
+  const customStore = React.useMemo(
+    () =>
+      new CustomStore({
+        key: 'prog',
+        load: async (loadOptions) => {
+          let params = '?';
 
-      [
-        'filter',
-        'group',
-        'groupSummary',
-        'parentIds',
-        'requireGroupCount',
-        'requireTotalCount',
-        'searchExpr',
-        'searchOperation',
-        'searchValue',
-        'select',
-        'sort',
-        'skip',
-        'take',
-        'totalSummary',
-        'userData'
-      ].forEach(function (i) {
-        if (i in loadOptions && isNotEmpty(loadOptions[i])) {
-          params += `${i}=${JSON.stringify(loadOptions[i])}&`;
-        }
-      });
-      params = params.slice(0, -1);
-      try {
-        console.log("reload -->");
-        console.log(inputSearch);
-        const response = await fetch(uriRetrieveCards, requestOptions);
-        const response_1 = await response.json();
-        console.log("response_1");
-        console.log(response_1);
-        const loaded = response_1 !== "" && response_1 !== undefined;
-        if (loaded) {
-          console.log("avrei finito io")
-          setIsLoadingSpinnerVisible(false);
-        }
-        return {
-          data: response_1.cards,
-          totalCount: response_1.hitsCount
-        };
-      } catch {
-        setToastUnauthorizeIsVisible(true);
-      }
-    }
-  }), [inputSearch]);
+          [
+            'filter',
+            'group',
+            'groupSummary',
+            'parentIds',
+            'requireGroupCount',
+            'requireTotalCount',
+            'searchExpr',
+            'searchOperation',
+            'searchValue',
+            'select',
+            'sort',
+            'skip',
+            'take',
+            'totalSummary',
+            'userData',
+          ].forEach(function (i) {
+            if (i in loadOptions && isNotEmpty(loadOptions[i])) {
+              params += `${i}=${JSON.stringify(loadOptions[i])}&`;
+            }
+          });
+          params = params.slice(0, -1);
+          try {
+            console.log('reload -->');
+            console.log(inputSearch);
+            const response = await fetch(uriRetrieveCards, requestOptions);
+            const response_1 = await response.json();
+            console.log('response_1');
+            console.log(response_1);
+            const loaded = response_1 !== '' && response_1 !== undefined;
+            if (loaded) {
+              console.log('avrei finito io');
+              setIsLoadingSpinnerVisible(false);
+            }
+            return {
+              data: response_1.cards,
+              totalCount: response_1.hitsCount,
+            };
+          } catch {
+            setToastUnauthorizeIsVisible(true);
+          }
+        },
+      }),
+    [inputSearch]
+  );
 
   /*
   * USE EFFECT
@@ -90,7 +93,6 @@ export default function InvoiceApp() {
   }, []);
   
   */
-
 
   /*
   React.useEffect(() => {
@@ -106,7 +108,7 @@ export default function InvoiceApp() {
   */
 
   return (
-    <div className='panel-container' id="datagrid-invoice">
+    <div className="panel-container" id="datagrid-invoice">
       <DataGridStore
         customStore={customStore}
         setInputSearch={setInputSearch}
@@ -143,16 +145,28 @@ const filterBuilder = {
 
 const filterValue = [
   /*['Employee', '=', 'Clark Morgan'], 'and', ['OrderDate', 'weekends']
-*/
+   */
 ];
 
 function useInvoiceApp() {
   const [inputSearch, setInputSearch] = React.useState(inputSearchObj);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [isLoadingSpinnerVisible, setIsLoadingSpinnerVisible] = React.useState(true);
-  const [uriRetrieveCards, setUriRetrieveCards] = React.useState(themeDisplay.getPortalURL() + Constants.retriveCardsPOST + "?p_auth=" + Liferay.authToken);
-  const [uriRetrieveCardsGET, setUriRetrieveCardsGET] = React.useState(themeDisplay.getPortalURL() + Constants.retrieveCardsGET + "?p_auth=" + Liferay.authToken);
-  const [toastUnauthorizeIsVisible, setToastUnauthorizeIsVisible] = React.useState(false);
+  const [isLoadingSpinnerVisible, setIsLoadingSpinnerVisible] =
+    React.useState(true);
+  const [uriRetrieveCards, setUriRetrieveCards] = React.useState(
+    themeDisplay.getPortalURL() +
+      Constants.retriveCardsPOST +
+      '?p_auth=' +
+      Liferay.authToken
+  );
+  const [uriRetrieveCardsGET, setUriRetrieveCardsGET] = React.useState(
+    themeDisplay.getPortalURL() +
+      Constants.retrieveCardsGET +
+      '?p_auth=' +
+      Liferay.authToken
+  );
+  const [toastUnauthorizeIsVisible, setToastUnauthorizeIsVisible] =
+    React.useState(false);
   const [conf, setConf] = React.useState();
 
   // LEGGI CONF DELLA PORTLET
@@ -169,6 +183,6 @@ function useInvoiceApp() {
     uriRetrieveCards,
     uriRetrieveCardsGET,
     toastUnauthorizeIsVisible,
-    setToastUnauthorizeIsVisible
-  ]
+    setToastUnauthorizeIsVisible,
+  ];
 }
