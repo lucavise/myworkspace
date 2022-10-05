@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.material.blue.light.css';
 import {
@@ -13,7 +13,7 @@ import {
   Toolbar,
   Button,
   Item,
-  RemoteOperations
+  RemoteOperations,
 } from 'devextreme-react/data-grid';
 import { Popup } from 'devextreme-react/popup';
 import TreeView from 'devextreme-react/tree-view';
@@ -23,54 +23,62 @@ import SelectBox from 'devextreme-react/select-box';
 import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
 import { jsPDF } from 'jspdf';
 import InvoiceDetailPopup from './InvoiceDetailPopup';
-import { ThreeDots } from 'react-loader-spinner'
-import { inputSearchObj } from "../data/inputSearchObj";
-import { inputSearchObjCurrentMonth } from "../data/inputSearchObjCurrentMonth";
-import LoadingSpinner from "./LoadingSpinner";
+import { ThreeDots } from 'react-loader-spinner';
+import { inputSearchObj } from '../data/inputSearchObj';
+import { inputSearchObjCurrentMonth } from '../data/inputSearchObjCurrentMonth';
+import LoadingSpinner from './LoadingSpinner';
 
 const exportFormats = ['pdf'];
 const allowedPageSizes = [10, 20, 50, 100];
-const optionsInvoiceState = [{
-  "ID": 1,
-  "name": "DA LAVORARE"
-},
-{
-  "ID": 2,
-  "name": "DA FIRMARE"
-},
-{
-  "ID": 3,
-  "name": "CONSEGNATO"
-}];
+const optionsInvoiceState = [
+  {
+    ID: 1,
+    name: 'DA LAVORARE',
+  },
+  {
+    ID: 2,
+    name: 'DA FIRMARE',
+  },
+  {
+    ID: 3,
+    name: 'CONSEGNATO',
+  },
+];
 
-const optionsInvoiceType = [{
-  "ID": 1,
-  "name": "B2B",
-  "value": "FPR12"
-},
-{
-  "ID": 2,
-  "name": "PA",
-  "value": "FPA12"
-}];
+const optionsInvoiceType = [
+  {
+    ID: 1,
+    name: 'B2B',
+    value: 'FPR12',
+  },
+  {
+    ID: 2,
+    name: 'PA',
+    value: 'FPA12',
+  },
+];
 
-const optionsInvoicePeriod = [{
-  "ID": 1,
-  "name": "Libero"
-},
-{
-  "ID": 2,
-  "name": "Mese precedente"
-}];
+const optionsInvoicePeriod = [
+  {
+    ID: 1,
+    name: 'Libero',
+  },
+  {
+    ID: 2,
+    name: 'Mese precedente',
+  },
+];
 
-const optionsPeriodTypePopup = [{
-  "ID": 1,
-  "name": "Compreso tra"
-},
-{
-  "ID": 2,
-  "name": "Uguale a"
-}];
+const optionsPeriodTypePopup = [
+  {
+    ID: 1,
+    name: 'Compreso tra',
+  },
+  {
+    ID: 2,
+    name: 'Uguale a',
+  },
+];
 
 export default function DataGridStore(props) {
   const [
@@ -104,7 +112,7 @@ export default function DataGridStore(props) {
     isCommentsIconVisible,
     handleClosedDropboxInvoiceState,
     textModel,
-    setTextModel
+    setTextModel,
   ] = useDataGridStore(props);
 
   // utilizzo useEffect per accorgermi di quando cambia veramente lo stato dell'index e aggiornare i dati nel popup
@@ -119,7 +127,7 @@ export default function DataGridStore(props) {
     const dataGrid = dataGridRef.current.instance;
     exportDataGridToPdf({
       jsPDFDocument: doc,
-      component: dataGrid
+      component: dataGrid,
     }).then(() => {
       doc.save('Customers.pdf');
     });
@@ -128,34 +136,34 @@ export default function DataGridStore(props) {
   // BOTTONI
   const buttonDownloadJobOptions = {
     hint: 'Abilita salvataggi automatici',
-    icon: "fas fa-hdd"
+    icon: 'fas fa-hdd',
   };
 
   const buttonDownloadOptions = {
-    icon: "fas fa-download",
-    onClick: exportGrid
+    icon: 'fas fa-download',
+    onClick: exportGrid,
   };
 
   const buttonSyncOptions = {
-    icon: "fas fa-sync-alt"
+    icon: 'fas fa-sync-alt',
   };
 
   const buttonMoreOptions = {
-    icon: "fas fa-ellipsis-v"
+    icon: 'fas fa-ellipsis-v',
   };
 
   const buttonForPopup = {
     text: textModel,
     onClick: function () {
       setPopupVisibility(!isPopupVisible);
-      console.log(isPopupVisible)
-    }
-  }
+      console.log(isPopupVisible);
+    },
+  };
 
   const renderContent = () => {
     return (
       <>
-        <div className='subititle-popup-interval'>Intervallo</div>
+        <div className="subititle-popup-interval">Intervallo</div>
         <SelectBox
           width="225"
           dataSource={optionsPeriodTypePopup}
@@ -163,48 +171,43 @@ export default function DataGridStore(props) {
           keyExpr="ID"
           onValueChanged={handleChangeTypePeriodPopup}
         />
-        <div className='space-date'>
-          {
-            typePeriodPopup !== undefined &&
+        <div className="space-date">
+          {typePeriodPopup !== undefined &&
             typePeriodPopup.ID === 1 &&
-            doubleDateBox()
-          }
-          {
-            typePeriodPopup !== undefined &&
+            doubleDateBox()}
+          {typePeriodPopup !== undefined &&
             typePeriodPopup.ID === 2 &&
-            uniqueDateBox()
-          }
+            uniqueDateBox()}
         </div>
       </>
-    )
-  }
+    );
+  };
 
   const now = new Date();
   const doubleDateBox = () => {
     return (
       <>
-        <DateBox defaultValue={now}
-          type="date" />
-        <DateBox defaultValue={now}
-          type="date" />
+        <DateBox defaultValue={now} type="date" />
+        <DateBox defaultValue={now} type="date" />
       </>
     );
-  }
+  };
 
   const uniqueDateBox = () => {
     return (
       <>
-        <DateBox defaultValue={now}
-          type="date" />
+        <DateBox defaultValue={now} type="date" />
       </>
-    )
-  }
+    );
+  };
 
   const treeViewRender = () => {
     return (
       <TreeView
         dataSource={optionsInvoiceState}
-        ref={node => { setTreeViewMine(node) }}
+        ref={(node) => {
+          setTreeViewMine(node);
+        }}
         dataStructure="plain"
         keyExpr="ID"
         selectionMode="multiple"
@@ -215,24 +218,29 @@ export default function DataGridStore(props) {
         onItemSelectionChanged={handleItemSelectionChangedInvoiceState}
       />
     );
-  }
+  };
 
   const refreshDatagrid = () => {
     // console.log(dataGridRef);
     dataGridRef.current.instance.state(null);
     props.setInputSearch({ ...props.inputSearch, ...inputSearchObj });
-
-  }
+  };
 
   const getCurrentMonthData = () => {
-    props.setInputSearch({ ...props.inputSearch, ...inputSearchObjCurrentMonth })
+    props.setInputSearch({
+      ...props.inputSearch,
+      ...inputSearchObjCurrentMonth,
+    });
     props.setIsLoadingSpinnerVisible(true);
-    setTextModel("Mese Corrente");
-  }
+    setTextModel('Mese Corrente');
+  };
 
   return (
     <>
-      <div className="btn-same-tab" onClick={getCurrentMonthData}><span>MESE CORRENTE</span><i class="fas fa-star"></i></div>
+      <div className="btn-same-tab" onClick={getCurrentMonthData}>
+        <span>MESE CORRENTE</span>
+        <i class="fas fa-star"></i>
+      </div>
       <DataGrid
         ref={dataGridRef}
         id="dataGrid"
@@ -254,14 +262,20 @@ export default function DataGridStore(props) {
         <Paging
           defaultPageSize={10}
           onPageIndexChange={handlePageIndexChange}
-          onPageSizeChange={handlePageSizeChange} />
+          onPageSizeChange={handlePageSizeChange}
+        />
         <Pager
           visible={true}
           showPageSizeSelector={true}
           showInfo={true}
           showNavigationButtons={true}
-          allowedPageSizes={allowedPageSizes} />
-        <Export enabled={true} formats={exportFormats} allowExportSelectedData={true} />
+          allowedPageSizes={allowedPageSizes}
+        />
+        <Export
+          enabled={true}
+          formats={exportFormats}
+          allowExportSelectedData={true}
+        />
         <FilterRow visible={true} />
         <Toolbar>
           <Item location="before">
@@ -284,7 +298,7 @@ export default function DataGridStore(props) {
               dataSource={optionsInvoiceType}
               displayExpr="name"
               keyExpr="ID"
-              placeholder='Fattura'
+              placeholder="Fattura"
               onValueChanged={handleChangeInvoiceType}
             />
           </Item>
@@ -294,7 +308,7 @@ export default function DataGridStore(props) {
               dataSource={optionsInvoicePeriod}
               displayExpr="name"
               keyExpr="ID"
-              defaultValue={"Libero"}
+              defaultValue={'Libero'}
               onValueChanged={handleChangeInvoicePeriod}
             />
           </Item>
@@ -305,12 +319,12 @@ export default function DataGridStore(props) {
             key={1}
           />
           <Item
-            cssClass={"modelname-interval"}
+            cssClass={'modelname-interval'}
             widget="dxButton"
             location="center"
             options={buttonForPopup}
-            key={2}>
-          </Item>
+            key={2}
+          ></Item>
           <Item
             widget="dxButton"
             location="after"
@@ -331,24 +345,44 @@ export default function DataGridStore(props) {
             key={5}
           />
         </Toolbar>
-        <HeaderFilter
-          allowSearch={true}
-          visible={true}
-        />
+        <HeaderFilter allowSearch={true} visible={true} />
         <Column type="buttons" width={40}>
-          <Button name="open" hint="Dettaglio" icon="fas fa-search-plus" onClick={handleViewDetailClick} />
+          <Button
+            name="open"
+            hint="Dettaglio"
+            icon="fas fa-search-plus"
+            onClick={handleViewDetailClick}
+          />
         </Column>
         <Column type="buttons" width={40}>
-          <Button name="view-signature-doc" hint="Visualizza documento principale in una nuova scheda [Firmato]" icon="fas fa-file-signature" />
+          <Button
+            name="view-signature-doc"
+            hint="Visualizza documento principale in una nuova scheda [Firmato]"
+            icon="fas fa-file-signature"
+          />
         </Column>
         <Column type="buttons" width={40}>
-          <Button name="" hint="Ricevute e comunicazioni SDI" icon="fas fa-stream" />
+          <Button
+            name=""
+            hint="Ricevute e comunicazioni SDI"
+            icon="fas fa-stream"
+          />
         </Column>
         <Column type="buttons" width={40}>
-          <Button name="attachments" hint="allegati presenti" icon="fas fa-paperclip" visible={isAttachmentsIconVisible}></Button>
+          <Button
+            name="attachments"
+            hint="allegati presenti"
+            icon="fas fa-paperclip"
+            visible={isAttachmentsIconVisible}
+          ></Button>
         </Column>
         <Column type="buttons" width={40}>
-          <Button name="notes" hint="note presenti" icon="fas fa-comments" visible={isCommentsIconVisible}></Button>
+          <Button
+            name="notes"
+            hint="note presenti"
+            icon="fas fa-comments"
+            visible={isCommentsIconVisible}
+          ></Button>
         </Column>
 
         <Column
@@ -442,10 +476,7 @@ export default function DataGridStore(props) {
           dataField={'fieldTypes[17].value'}
           defaultSelectedFilterOperation="="
         />
-        <Column
-          caption={'Formato trasmissione'}
-          allowFiltering={false}
-        />
+        <Column caption={'Formato trasmissione'} allowFiltering={false} />
         <Column
           caption={'Canale principale'}
           dataField={'fieldTypes[19].value'}
@@ -476,13 +507,9 @@ export default function DataGridStore(props) {
           dataField={'fieldTypes[24].value'}
           defaultSelectedFilterOperation="="
         />
-
       </DataGrid>
-      {
-        props.isLoadingSpinnerVisible && <LoadingSpinner />
-      }
-      {
-        /*
+      {props.isLoadingSpinnerVisible && <LoadingSpinner />}
+      {/*
         <ThreeDots
         height="50"
         width="100"
@@ -502,9 +529,8 @@ export default function DataGridStore(props) {
         wrapperClassName="three-dots-loading"
         visible={props.isLoadingSpinnerVisible}
       />
-        */
-      }
-      
+        */}
+
       <Popup
         width={550}
         height={550}
@@ -515,23 +541,26 @@ export default function DataGridStore(props) {
         contentRender={renderContent}
       />
 
-      {popupRowDataVisible &&
+      {popupRowDataVisible && (
         <div>
           <InvoiceDetailPopup
             allDataInGrid={allDataInGrid}
             popupRowData={popupRowData}
             popupRowDataVisible={popupRowDataVisible}
             indexPopupRowData={indexPopupRowData}
-            onChange={handleChange} />
+            onChange={handleChange}
+          />
         </div>
-      }
+      )}
     </>
   );
 }
 
 function useDataGridStore(props) {
   const [typePeriodPopup, setTypePeriodPopup] = React.useState();
-  const [multiValuesInvoiceState, setMultiValuesInvoiceState] = React.useState([]);
+  const [multiValuesInvoiceState, setMultiValuesInvoiceState] = React.useState(
+    []
+  );
   const [treeViewMine, setTreeViewMine] = React.useState();
   const [popupRowDataVisible, setPopupRowDataVisible] = React.useState(false);
   const [popupRowData, setPopupRowData] = React.useState();
@@ -541,7 +570,9 @@ function useDataGridStore(props) {
   const [invoiceType, setInvoiceType] = React.useState();
   const [invoicePeriod, setInvoicePeriod] = React.useState();
   const [input, setInput] = React.useState(props.inputSearch);
-  const [textModel, setTextModel] = React.useState("Compreso tra 1/1/2018 : 31/12/2018");
+  const [textModel, setTextModel] = React.useState(
+    'Compreso tra 1/1/2018 : 31/12/2018'
+  );
 
   /*
   const getInvoiceData = async () => {
@@ -579,11 +610,11 @@ function useDataGridStore(props) {
 
   const isAttachmentsIconVisible = (e) => {
     return e.row.data.hasAttachments;
-  }
+  };
 
   const isCommentsIconVisible = (e) => {
     return e.row.data.hasNotes;
-  }
+  };
 
   const togglePopup = () => {
     setPopupVisibility(!isPopupVisible);
@@ -591,18 +622,20 @@ function useDataGridStore(props) {
 
   // cambio di stato nella multiselection dello stato fattura
   const handleValueChangedInvoiceState = (e) => {
-    console.log("change invoice state");
-    const treeView = (e.component.selectItem && e.component)
-      || (treeViewMine && treeViewMine.instance);
+    console.log('change invoice state');
+    const treeView =
+      (e.component.selectItem && e.component) ||
+      (treeViewMine && treeViewMine.instance);
 
     if (treeView) {
       if (e.value === null) {
         treeView.unselectAll();
       } else {
         const values = e.value || multiValuesInvoiceState;
-        values && values.forEach((value) => {
-          treeView.selectItem(value);
-        });
+        values &&
+          values.forEach((value) => {
+            treeView.selectItem(value);
+          });
       }
     }
 
@@ -611,97 +644,137 @@ function useDataGridStore(props) {
       const val = e.value;
 
       if (val !== undefined && val !== null) {
-        const arrValueToObjInput = optionsInvoiceState.filter(it => val.includes(it.ID));
-        const valueToObjInput = arrValueToObjInput.reduce((accumulator, item) => accumulator += item.name + ",", '')
-        localStorage.setItem("valueToObjInput", valueToObjInput.substring(0, valueToObjInput.length - 1))
-        console.log(localStorage.getItem("valueToObjInput"));
+        const arrValueToObjInput = optionsInvoiceState.filter((it) =>
+          val.includes(it.ID)
+        );
+        const valueToObjInput = arrValueToObjInput.reduce(
+          (accumulator, item) => (accumulator += item.name + ','),
+          ''
+        );
+        localStorage.setItem(
+          'valueToObjInput',
+          valueToObjInput.substring(0, valueToObjInput.length - 1)
+        );
+        console.log(localStorage.getItem('valueToObjInput'));
       }
       setMultiValuesInvoiceState(e.value);
     }
-  }
+  };
 
   const handleClosedDropboxInvoiceState = () => {
-    const stateToInputStr = localStorage.getItem("valueToObjInput");
+    const stateToInputStr = localStorage.getItem('valueToObjInput');
     const nextInputSearchFields = [
-      ...props.inputSearch.paramIn.SearchCriteria.Fields, {
+      ...props.inputSearch.paramIn.SearchCriteria.Fields,
+      {
         FieldValueTo: stateToInputStr,
-        FieldId: "21",
-        FieldValue: stateToInputStr
-      }
-    ]
-    const nextInputSearchSearchCriteria = { ...props.inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
-    const nextInputSearchParamIn = { ...props.inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
-    props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
+        FieldId: '21',
+        FieldValue: stateToInputStr,
+      },
+    ];
+    const nextInputSearchSearchCriteria = {
+      ...props.inputSearch.paramIn.SearchCriteria,
+      Fields: nextInputSearchFields,
+    };
+    const nextInputSearchParamIn = {
+      ...props.inputSearch.paramIn,
+      SearchCriteria: nextInputSearchSearchCriteria,
+    };
+    props.setInputSearch({
+      ...props.inputSearch,
+      paramIn: nextInputSearchParamIn,
+    });
     props.setIsLoadingSpinnerVisible(true);
-  }
+  };
 
   const handleChange = (newValue) => {
     setPopupRowDataVisible(newValue);
-  }
+  };
 
   const handleItemSelectionChangedInvoiceState = (e) => {
     // const isPresent = multiValuesInvoiceState.filter((item) => item !== undefined && item === e.itemData.ID)
     setMultiValuesInvoiceState(e.component.getSelectedNodeKeys());
     //console.log(isPresent);
     console.log(e);
-  }
+  };
 
   const handlePageIndexChange = (e) => {
     let index = e + 1;
-    console.log("nuovo indice " + index);
-    const nextInputSearchParamIn = { ...props.inputSearch.paramIn, PageNumber: index };
+    console.log('nuovo indice ' + index);
+    const nextInputSearchParamIn = {
+      ...props.inputSearch.paramIn,
+      PageNumber: index,
+    };
     console.log(nextInputSearchParamIn);
-    props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
+    props.setInputSearch({
+      ...props.inputSearch,
+      paramIn: nextInputSearchParamIn,
+    });
     props.setIsLoadingSpinnerVisible(true);
-  }
+  };
 
   const handlePageSizeChange = (e) => {
     let size = e;
-    console.log("nuova dimensione " + size);
-    const nextInputSearchParamIn = { ...props.inputSearch.paramIn, PageSize: size };
+    console.log('nuova dimensione ' + size);
+    const nextInputSearchParamIn = {
+      ...props.inputSearch.paramIn,
+      PageSize: size,
+    };
     console.log(nextInputSearchParamIn);
-    props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
+    props.setInputSearch({
+      ...props.inputSearch,
+      paramIn: nextInputSearchParamIn,
+    });
     props.setIsLoadingSpinnerVisible(true);
-  }
+  };
 
   const handleChangeInvoiceType = (e) => {
     const nextInputSearchFields = [
-      ...props.inputSearch.paramIn.SearchCriteria.Fields, {
+      ...props.inputSearch.paramIn.SearchCriteria.Fields,
+      {
         FieldValueTo: e.value.value,
-        FieldId: "18",
-        FieldValue: e.value.value
-      }
-    ]
+        FieldId: '18',
+        FieldValue: e.value.value,
+      },
+    ];
 
-    const nextInputSearchSearchCriteria = { ...props.inputSearch.paramIn.SearchCriteria, Fields: nextInputSearchFields };
-    const nextInputSearchParamIn = { ...props.inputSearch.paramIn, SearchCriteria: nextInputSearchSearchCriteria };
-    props.setInputSearch({ ...props.inputSearch, paramIn: nextInputSearchParamIn });
+    const nextInputSearchSearchCriteria = {
+      ...props.inputSearch.paramIn.SearchCriteria,
+      Fields: nextInputSearchFields,
+    };
+    const nextInputSearchParamIn = {
+      ...props.inputSearch.paramIn,
+      SearchCriteria: nextInputSearchSearchCriteria,
+    };
+    props.setInputSearch({
+      ...props.inputSearch,
+      paramIn: nextInputSearchParamIn,
+    });
     props.setIsLoadingSpinnerVisible(true);
     setInvoiceType(e.value);
-  }
+  };
 
   const handleChangeInvoicePeriod = (e) => {
     setInvoicePeriod(e.value);
-  }
+  };
 
   const handleChangeTypePeriodPopup = (e) => {
     console.log(e.value);
     setTypePeriodPopup(e.value);
-  }
+  };
 
   const handleContentReadyOfDataGrid = (e) => {
     // ad ogni refresh dei dati si refresha anche la griglia. Quando tutti i dati sono in griglia
     // me li prendo e li metto in uno stato. Mi servono per scorrerli dentro al popup in modalità slider
     // console.log(e.component.getDataSource());
     setAllDataInGrid(e.component.getDataSource()._items);
-  }
+  };
 
   // gestisce click su icona di dettaglio
   const handleViewDetailClick = (e) => {
     setPopupRowData(e.row.data);
     setIndexPopupRowData(e.row.rowIndex);
     setPopupRowDataVisible(true);
-  }
+  };
 
   // gestisce doppio click generico sulla riga
   const handleRowDblClick = (e) => {
@@ -709,7 +782,7 @@ function useDataGridStore(props) {
     setPopupRowData(e.data);
     setIndexPopupRowData(e.rowIndex);
     setPopupRowDataVisible(true);
-  }
+  };
 
   return [
     typePeriodPopup,
@@ -742,6 +815,6 @@ function useDataGridStore(props) {
     isCommentsIconVisible,
     handleClosedDropboxInvoiceState,
     textModel,
-    setTextModel
-  ]
+    setTextModel,
+  ];
 }
