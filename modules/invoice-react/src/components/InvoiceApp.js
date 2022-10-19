@@ -1,12 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import '../App.css';
-import CustomStore from 'devextreme/data/custom_store';
-import { inputSearchObj } from '../data/inputSearchObj';
-import DataGridStore from './DataGridStore';
-import { Toast } from 'devextreme-react/toast';
-import * as Constants from '../utils/constants';
-import getConfiguration from '../configuration';
+import "../App.css";
+import CustomStore from "devextreme/data/custom_store";
+import { inputSearchObj } from "../data/inputSearchObj";
+import DataGridStore from "./DataGridStore";
+import { Toast } from "devextreme-react/toast";
+import * as Constants from "../utils/constants";
 
 export default function InvoiceApp() {
   const [
@@ -23,37 +22,37 @@ export default function InvoiceApp() {
   ] = useInvoiceApp();
 
   const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(inputSearch),
   };
 
   const isNotEmpty = (value) =>
-    value !== undefined && value !== null && value !== '';
+    value !== undefined && value !== null && value !== "";
 
   const customStore = React.useMemo(
     () =>
       new CustomStore({
-        key: 'prog',
+        key: "prog",
         load: async (loadOptions) => {
-          let params = '?';
+          let params = "?";
 
           [
-            'filter',
-            'group',
-            'groupSummary',
-            'parentIds',
-            'requireGroupCount',
-            'requireTotalCount',
-            'searchExpr',
-            'searchOperation',
-            'searchValue',
-            'select',
-            'sort',
-            'skip',
-            'take',
-            'totalSummary',
-            'userData',
+            "filter",
+            "group",
+            "groupSummary",
+            "parentIds",
+            "requireGroupCount",
+            "requireTotalCount",
+            "searchExpr",
+            "searchOperation",
+            "searchValue",
+            "select",
+            "sort",
+            "skip",
+            "take",
+            "totalSummary",
+            "userData",
           ].forEach(function (i) {
             if (i in loadOptions && isNotEmpty(loadOptions[i])) {
               params += `${i}=${JSON.stringify(loadOptions[i])}&`;
@@ -61,15 +60,15 @@ export default function InvoiceApp() {
           });
           params = params.slice(0, -1);
           try {
-            console.log('reload -->');
+            console.log("reload -->");
             console.log(inputSearch);
             const response = await fetch(uriRetrieveCards, requestOptions);
             const response_1 = await response.json();
-            console.log('response_1');
+            console.log("response_1");
             console.log(response_1);
-            const loaded = response_1 !== '' && response_1 !== undefined;
+            const loaded = response_1 !== "" && response_1 !== undefined;
             if (loaded) {
-              console.log('avrei finito io');
+              console.log("avrei finito io");
               setIsLoadingSpinnerVisible(false);
             }
             return {
@@ -156,13 +155,13 @@ function useInvoiceApp() {
   const [uriRetrieveCards, setUriRetrieveCards] = React.useState(
     themeDisplay.getPortalURL() +
       Constants.retriveCardsPOST +
-      '?p_auth=' +
+      "?p_auth=" +
       Liferay.authToken
   );
   const [uriRetrieveCardsGET, setUriRetrieveCardsGET] = React.useState(
     themeDisplay.getPortalURL() +
       Constants.retrieveCardsGET +
-      '?p_auth=' +
+      "?p_auth=" +
       Liferay.authToken
   );
   const [toastUnauthorizeIsVisible, setToastUnauthorizeIsVisible] =
